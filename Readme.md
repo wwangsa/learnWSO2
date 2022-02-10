@@ -20,12 +20,14 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	Create an endpoint where name is passed as path param and it will return a greeting message "Welcome {name}".
 
 	```shell
+		# GET greetings/{name}
 		curl -v GET "http://localhost:8290/greetings/Nelson" -w "\n"
 	```
 
-	* Resource: Define the api path
-	* Property: It is used to manipulate properties. A formula can be used to concatenate the values from query strings or path params
-	* Payload: Set how the output looks like based on message created by property
+	1. Resource: Define the api path
+	2. Property: It is used to manipulate properties. A formula can be used to concatenate the values from query strings or path params
+	3. Payload: Set how the output looks like based on message created by property
+	4. To run the project, right click on the "ProjectZeroCompositeExporter" and "Export Projects Artifact and Run"
 	
 
 ## Section 2: Message entry points
@@ -48,13 +50,50 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	Using Log mediator to generate log message.
 
 	```shell
+		#GET orders
 		curl -v GET "http://localhost:8290/orders" -w "\n"
 	```
 
 	```shell
-	#On Micro Integrator Server Log, it generates the following line when the curl is executed
+	# On Micro Integrator Server Log, it generates the following line when the curl is executed
 	2022-02-09 23:36:51,656]  INFO {LogMediator} - {api:EcommerceAPI} LOG MESSAGE = this is the default resource
 	```
+
+14. REST APIs - URI Template
+	Message flows: 
+	1. On the new API Resource, define the URI_TEMPLATE so we can use the path params (`$ctx:uri.var.currentMonth`) and query strings (`$ctx:query.param.minday` and `$ctx:query.param.maxday`). 
+	2. Log Message is used to capture the path params and query strings then hold them into variables.
+	3. Set Payload is used to define the message output based on variables passed onto the output
+	4. Loop Back mediator is used to move the message from inflow to outflow sequence.
+	5. Respond mediator is used to send back the result back to the client
+
+	```shell
+		#Before adding the query strings in the log message
+		#GET orders/month/{currentMonth}
+		curl -v GET "http://localhost:8290/orders/month/January" -w "\n"
+	```
+
+	```json
+		{
+        	"month":January
+		}
+	```
+
+	```shell
+		#After adding the query strings in the log message
+		#GET orders/month/{currentMonth}?
+		curl -v GET "http://localhost:8290/orders/month/January?minday=1&maxday=20" -w "\n"
+	```
+
+	```json
+		{
+			"month":January,
+			"minday":1,
+			"max":20,
+			"totalOrders": 200
+		}
+	```
+
 
 ## Section 3: Message processing units
 

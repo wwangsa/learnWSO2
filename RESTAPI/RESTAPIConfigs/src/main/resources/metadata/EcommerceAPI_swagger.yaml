@@ -11,3 +11,16 @@ paths:
       responses:
         default:
           description: Default response
+  /month/{currentMonth}:
+    get:
+      parameters:
+      - name: currentMonth
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        default:
+          description: Default response

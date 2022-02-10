@@ -9,4 +9,31 @@
         <outSequence/>
         <faultSequence/>
     </resource>
+    <resource methods="GET" protocol="http" uri-template="/month/{currentMonth}?*">
+        <inSequence>
+            <log description="LOG MESSAGE" level="custom">
+                <property expression="$ctx:uri.var.currentMonth" name="LOG MONTH"/>
+                <property expression="$ctx:query.param.minday" name="LOG MIN DAY"/>
+                <property expression="$ctx:query.param.maxday" name="LOG MAX DAY"/>
+            </log>
+            <payloadFactory description="SET PAYLOAD" media-type="json">
+                <format>{
+	"month":$1,
+	"minday":$2,
+	"max":$3,
+	"totalOrders": 200
+}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:uri.var.currentMonth"/>
+                    <arg evaluator="xml" expression="$ctx:query.param.minday"/>
+                    <arg evaluator="xml" expression="$ctx:query.param.maxday"/>
+                </args>
+            </payloadFactory>
+            <loopback/>
+        </inSequence>
+        <outSequence>
+            <respond description="SEND OUT"/>
+        </outSequence>
+        <faultSequence/>
+    </resource>
 </api>
