@@ -47,6 +47,7 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	With the changes above, when we run the curl without resource specified, we will get 405 Methods not allowed when doing curl. While the logmediator will report the xml message above.
 
 13. REST APIs - Default API Resource (Project folder: ECommerceAPI)
+
 	Using Log mediator to generate log message.
 
 	```shell
@@ -60,6 +61,7 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	```
 
 14. REST APIs - URI Template
+	
 	Message flows: 
 	1. On the new API Resource, define the URI_TEMPLATE so we can use the path params (`$ctx:uri.var.currentMonth`) and query strings (`$ctx:query.param.minday` and `$ctx:query.param.maxday`). 
 	2. Log Message is used to capture the path params and query strings then hold them into variables.
