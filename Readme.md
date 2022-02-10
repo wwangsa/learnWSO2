@@ -10,24 +10,36 @@ Github: https://github.com/nelsonandredias/wso2_course
 
 To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 ```shell
-cd ~/IntegrationStudio/8.0.0/workspace
-git clone https://github.com/wwangsa/learnWSO2.git
+	cd ~/IntegrationStudio/8.0.0/workspace
+	git clone https://github.com/wwangsa/learnWSO2.git
 ```
+
+## Tips
+* When doing google search, use the following keywords. Most of the time, google search will point to old article so specifying version would help narrow down the latest result. WSO2 Enterprise Integrator (EI) was introduced on v6.
+	* ESB: WSO2 EI ESB {version}
+	* Data service server: WSO2 EI DSS {version}
+
+## References
+* To learn more different types of mediators and what it could do, here is the [link to the v 7.2.0](https://ei.docs.wso2.com/en/7.2.0/micro-integrator/references/mediators/about-mediators/#!) with Micro Integrator.
 
 ## Section 1: Introduction
 
 6. Create the project Zero (Project folder: ProjectZero)
 	Create an endpoint where name is passed as path param and it will return a greeting message "Welcome {name}".
 
+	Call GET greetings/{name}
 	```shell
-		# GET greetings/{name}
 		curl -v GET "http://localhost:8290/greetings/Nelson" -w "\n"
 	```
-
-	1. Resource: Define the api path
-	2. Property: It is used to manipulate properties. A formula can be used to concatenate the values from query strings or path params
-	3. Payload: Set how the output looks like based on message created by property
-	4. To run the project, right click on the "ProjectZeroCompositeExporter" and "Export Projects Artifact and Run"
+	
+	Note on Mediators:
+	1. API: Where the it defines the part of url. In the ex above, ie. greetings
+	2. Resource: Where the endpoints path are defined. In the ex above, ie. name
+	3. Log: To generate message in the log file
+	4. Property: It is used to manipulate messages. A formula can be used to concatenate the values from query strings or path params
+	5. Payload Factory: Transforms or replaces the contents of a message in other words set how the output looks like based on message created by property
+	6. Inflow and Outflow Mediators: inflow refers to request sequence while outflow refers to response sequence. Each sequence has childs in it such as log, property, payload factory and so on.
+	7. To run the project, right click on the "ProjectZeroCompositeExporter" and "Export Projects Artifact and Run"
 	
 
 ## Section 2: Message entry points
@@ -51,7 +63,7 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	Using Log mediator to generate log message.
 
 	```shell
-		#GET orders
+		# GET orders
 		curl -v GET "http://localhost:8290/orders" -w "\n"
 	```
 
@@ -64,9 +76,9 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	
 	Message flows: 
 	1. On the new API Resource, define the URI_TEMPLATE so we can use the path params (`$ctx:uri.var.currentMonth`) and query strings (`$ctx:query.param.minday` and `$ctx:query.param.maxday`). 
-	2. Log Message is used to capture the path params and query strings then hold them into variables.
+	2. Log Message is used to log and capture the path params and query strings then hold them into variables.
 	3. Set Payload is used to define the message output based on variables passed onto the output
-	4. Loop Back mediator is used to move the message from inflow to outflow sequence.
+	4. Loop Back mediator is used to move the message from inflow (request path) to outflow (response path) sequence.  All the configuration included in the in sequence that appears after the Loopback mediator is skipped.
 	5. Respond mediator is used to send back the result back to the client
 
 	Call `GET orders/month/{currentMonth}`
