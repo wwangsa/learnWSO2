@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="EcommerceAPI" groupId="com.example.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/EcommerceAPI.xml</file>
+    </artifact>
+    <artifact name="EcommerceAPI_swagger" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/EcommerceAPI_swagger.yaml</file>
+    </artifact>
+    <artifact name="EcommerceAPI_metadata" groupId="com.example.metadata" version="1.0.0" type="synapse/metadata" serverRole="EnterpriseServiceBus">
+        <file>src/main/resources/metadata/EcommerceAPI_metadata.yaml</file>
+    </artifact>
+</artifacts>

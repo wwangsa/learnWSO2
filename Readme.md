@@ -16,7 +16,7 @@ git clone https://github.com/wwangsa/learnWSO2.git
 
 ## Section 1: Introduction
 
-6. Create the project Zero (ProjectZero)
+6. Create the project Zero (Project folder: ProjectZero)
 	Create an endpoint where name is passed as path param and it will return a greeting message "Welcome {name}".
 
 	```shell
@@ -44,6 +44,17 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	```
 	With the changes above, when we run the curl without resource specified, we will get 405 Methods not allowed when doing curl. While the logmediator will report the xml message above.
 
+13. REST APIs - Default API Resource (Project folder: ECommerceAPI)
+	Using Log mediator to generate log message.
+
+	```shell
+		curl -v GET "http://localhost:8290/orders" -w "\n"
+	```
+
+	```shell
+	#On Micro Integrator Server Log, it generates the following line when the curl is executed
+	2022-02-09 23:36:51,656]  INFO {LogMediator} - {api:EcommerceAPI} LOG MESSAGE = this is the default resource
+	```
 
 ## Section 3: Message processing units
 

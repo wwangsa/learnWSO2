@@ -1,0 +1,10 @@
+---
+key: "EcommerceAPI-1.0.0"
+name : "EcommerceAPI"
+displayName : "EcommerceAPI"
+description: "Sample API"
+version: "1.0.0"
+serviceUrl: "https://{MI_HOST}:{MI_PORT}/orders"
+definitionType: "OAS3"
+securityType: "BASIC"
+mutualSSLEnabled: false

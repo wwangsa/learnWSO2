@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/orders" name="EcommerceAPI" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" protocol="http">
+        <inSequence>
+            <log description="LOG MESSAGE" level="custom">
+                <property name="LOG MESSAGE" value="this is the default resource"/>
+            </log>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
