@@ -67,24 +67,23 @@ git clone https://github.com/wwangsa/learnWSO2.git
 	4. Loop Back mediator is used to move the message from inflow to outflow sequence.
 	5. Respond mediator is used to send back the result back to the client
 
+	Call `GET orders/month/{currentMonth}`
 	```shell
 		#Before adding the query strings in the log message
-		#GET orders/month/{currentMonth}
 		curl -v GET "http://localhost:8290/orders/month/January" -w "\n"
 	```
-
+	Result `GET orders/month/{currentMonth}`
 	```json
 		{
         	"month":January
 		}
 	```
-
+	Call `GET orders/month/{currentMonth}?*`
 	```shell
 		#After adding the query strings in the log message
-		#GET orders/month/{currentMonth}?
 		curl -v GET "http://localhost:8290/orders/month/January?minday=1&maxday=20" -w "\n"
 	```
-
+	Result `GET orders/month/{currentMonth}?*`
 	```json
 		{
 			"month":January,
