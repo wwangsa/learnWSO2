@@ -19,7 +19,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 * When doing google search, use the following keywords. Most of the time, google search will point to old article so specifying version would help narrow down the latest result. WSO2 Enterprise Integrator (EI) was introduced on v6.
 	* ESB: WSO2 EI ESB {version}
 	* Data service server: WSO2 EI DSS {version}
-* When dragging and drop mediators, sometimes the mediators keep dragging the previous mediator. This is the IDE bug. You have to click the new mediator until it got highlighted, then you drag it.
+* When dragging and drop mediators, sometimes the mediators keep dragging the previous mediator. This is the IDE bug. You have to click the new mediator until it got highlighted (may have to click multiple times), then you drag it.
 * To stop the console run, there is a maximize icon on top right of the console window. When it's click, you will see the stop button
 
 ## References
@@ -28,7 +28,11 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 ## Section 1: Introduction
 
 6. Create the project Zero (Project folder: ProjectZero)
+	* When creating new integration project, use the "New Integration Project". This will create a folder that contains with *ESBConfigs* and *CompositeExporter* folders undeneath it.
+	* To add REST API Project, click on the *ESBConfigs* folder > New> REST API > Create A New API Artifact
+
 	Create an endpoint where name is passed as path param and it will return a greeting message "Welcome {name}".
+
 
 	Call GET greetings/{name}
 	```shell
@@ -53,6 +57,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	```
 	When no resource specified, the curl will return 404 while the log mediator will report "main sequence executed for call to non-existent". This message comes can be customizedfrom
 	{IntegrationStudio_Home}/runtime/microesb/repository/deployment/server/synapse-configs/default/sequences/main.xml and add the following underneath the first custom log
+
 	```xml
 	<log descripton="LOG CUSTOM MAIN SEQUENCE" level="custom">
             <property name="LOG CUSTOM DEFAULT MESSAGE" value="this messages is part of the default main sequence"/>
@@ -148,7 +153,62 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 				}
 			}
 		}
+	```
 
+16. REST APIs - Swagger files (Project folder: SwaggerFile)
+	
+	* After the project is created and project artifacts exported, the Swagger Editor tab will shows up next to Design and Source tabs for the xml file you edit. This is due to built in Swagger processor in WSO2. 
+	* The processors setting can be found in {Integration_Home}/runtime/microesb/conf/carbon.xml. 
+	* To access the project's swagger, go to either urls: 
+		* http://localhost:8290/PetsAPI?swagger.json 
+		* http://localhost:8290/PetsAPI?swagger.yaml (download)
+	* We can download the yaml file and upload it to the Postman so we don't have to set it up in Postman manually. One thing to note that Postman will use https url.
+
+	Below is to test manually using curl
+	Call `GET api/pets`
+	```shell
+		#After adding the query strings in the log message
+		curl -v GET "http://localhost:8290/api/pets" -w "\n"
+	```
+	Result `GET api/pets`
+	```json
+		{
+			"pet":{
+				"name":"Kuky",
+				"animal":"Dog"
+			},
+			"pet":{
+				"name":"Kuky",
+				"animal":"Cat"
+			},
+			"pet":{
+				"name":"Star",
+				"animal":"Cat"
+			},
+			"pet":{
+				"name":"Gems",
+				"animal":"Mouse"
+			}
+		}
+	```
+
+	Call `GET api/pets/{name}`
+	```shell
+		#After adding the query strings in the log message
+		curl -v GET "http://localhost:8290/api/pets/Kuky" -w "\n"
+	```
+	Result `GET api/pets{name}`
+	```json
+		{
+			"pet":{
+				"name":"Kuky",
+				"animal":"Dog"
+			},
+			"pet":{
+				"name":"Kuky",
+				"animal":"Cat"
+			}
+		}
 	```
 
 
