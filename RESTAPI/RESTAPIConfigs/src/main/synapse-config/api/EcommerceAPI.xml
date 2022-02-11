@@ -36,4 +36,33 @@
         </outSequence>
         <faultSequence/>
     </resource>
+    <resource methods="GET" protocol="http" url-mapping="/list">
+        <inSequence>
+            <log description="LOG MESSAGE" level="full"/>
+            <payloadFactory description="SET PAYLOAD" media-type="json">
+                <format>{
+	"orders":{
+		"order":{
+			"country":"Portugal",
+			"total":394
+		},
+		"order":{
+			"country":"Spain",
+			"total":212
+		},
+		"order":{
+			"country":"Brazil",
+			"total":690
+		}
+	}
+}</format>
+                <args/>
+            </payloadFactory>
+            <loopback/>
+        </inSequence>
+        <outSequence>
+            <respond description="SEND OUT"/>
+        </outSequence>
+        <faultSequence/>
+    </resource>
 </api>

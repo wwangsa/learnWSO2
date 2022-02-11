@@ -24,3 +24,8 @@ paths:
       responses:
         default:
           description: Default response
+  /list:
+    get:
+      responses:
+        default:
+          description: Default response

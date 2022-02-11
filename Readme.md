@@ -1,5 +1,6 @@
 # [Udemy - Learn WSO2 MI: a Step Guide to Master ESB & API Integration](https://www.udemy.com/course/learn-wso2-mi-a-step-guide-to-master-esb-api-integration/)
 Instructor: Nelson Dias
+
 Github: https://github.com/nelsonandredias/wso2_course
 
 
@@ -18,6 +19,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 * When doing google search, use the following keywords. Most of the time, google search will point to old article so specifying version would help narrow down the latest result. WSO2 Enterprise Integrator (EI) was introduced on v6.
 	* ESB: WSO2 EI ESB {version}
 	* Data service server: WSO2 EI DSS {version}
+* When dragging and drop mediators, sometimes the mediators keep dragging the previous mediator. This is the IDE bug. You have to click the new mediator until it got highlighted, then you drag it.
+* To stop the console run, there is a maximize icon on top right of the console window. When it's click, you will see the stop button
 
 ## References
 * To learn more different types of mediators and what it could do, here is the [link to the v 7.2.0](https://ei.docs.wso2.com/en/7.2.0/micro-integrator/references/mediators/about-mediators/#!) with Micro Integrator.
@@ -73,7 +76,11 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	```
 
 14. REST APIs - URI Template
+
+	Resource's URL Style: URI_TEMPLATE
 	
+	Allowing path on the resource url
+
 	Message flows: 
 	1. On the new API Resource, define the URI_TEMPLATE so we can use the path params (`$ctx:uri.var.currentMonth`) and query strings (`$ctx:query.param.minday` and `$ctx:query.param.maxday`). 
 	2. Log Message is used to log and capture the path params and query strings then hold them into variables.
@@ -105,6 +112,43 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			"max":20,
 			"totalOrders": 200
 		}
+	```
+
+15. REST APIs - URL Mapping
+	
+	Resource's URL style - URI_MAPPING
+	
+	Request that match the mapping pattern will be processed. There are 3 kinds of url mapping:
+	* Extension mapping. Ex: `/.jsp`
+	* Exact mapping. Ex: `/test` 
+	* Path mapping. Ex: `/test/*`
+	
+	Be careful when constructing JSON. Missing double quote will compiled ok but would not show result
+
+	Call `GET orders/list`
+	```shell
+		#After adding the query strings in the log message
+		curl -v GET "http://localhost:8290/orders/list" -w "\n"
+	```
+	Result `GET orders/month/{currentMonth}?*`
+	```json
+		{
+			"orders":{
+				"order":{
+					"country":"Portugal",
+					"total":394
+				},
+				"order":{
+					"country":"Spain",
+					"total":212
+				},
+				"order":{
+					"country":"Brazil",
+					"total":690
+				}
+			}
+		}
+
 	```
 
 
