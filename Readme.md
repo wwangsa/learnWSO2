@@ -211,6 +211,57 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		}
 	```
 
+17. Proxy services
+It's a SOAP service. It used to perform transformation and introduce functionality without changing the existing service. The author provided 2 files:
+	1. Java based SOAP service. The webservice can be accessed at http://localhost:9000/services/SimpleStockQuoteService
+
+	```shell
+		#Prerequisites. The instructor uses Java 1.8 or Java 8 (OpenJDK). It would not work with 11 or higher. Run the following to install java 8.
+		sudo apt install openjdk-8-jdk
+		#create symbolic link so we can execute it by calling java8
+		sudo ln -s /usr/lib/jvm/java-8-openjdk-amd64/bin/java /usr/bin/java8
+
+		#To run the web services, execute this with java 8.   
+		java8 -jar Resources/Chapter_17_Proxy_Services/stockquote_service.jar
+	```	
+	2. Import WSDL file using Postman, SoapUI or Curl
+
+		The instructor is using SoapUI. Below is the instruction to use Postman or curl
+
+		a. Under Postman's colection, expand SimpleStockQuoteService > SimpleStockQuoteServiceHttpSoap12Endpoint/getQuote then go to the Body and change the value under the symbol tag to `IBM`. 
+
+
+		b. Using Curl
+		* Using xml file as data reference. Due to relative path, make sure to run it on the workspace folder.
+		```shell
+			curl --location --request POST 'http://localhost:9000/services/SimpleStockQuoteService' \
+			--header 'Content-Type: text/xml; charset=utf-8' \
+			--header 'SOAPAction: urn:getQuote' \
+			--data @Resources/Chapter_17_Proxy_Services/requestBody.xml
+		```
+		* Without using xml file
+		```shell
+			curl --location --request POST 'http://localhost:9000/services/SimpleStockQuoteService' \
+			--header 'Content-Type: text/xml; charset=utf-8' \
+			--header 'SOAPAction: urn:getQuote' \
+			--data-raw '<?xml version="1.0" encoding="utf-8"?>
+			<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+			<soap:Body>
+				<getQuote xmlns="http://services.samples">
+				<request>
+					<symbol>string</symbol>
+				</request>
+				</getQuote>
+			</soap:Body>
+			</soap:Envelope>
+			'
+		```
+
+
+
+	
+
+
 
 ## Section 3: Message processing units
 
