@@ -260,19 +260,24 @@ The instructor use a SOAP service for the Proxy services example. The proxy serv
 
 Once the test successful, we are creating the proxy services where we register the WSDL file into the Registry Resources
 
-1. Create new integration project called `ProxyService` on the workspace folder but this time 3 Modules need to be created: `ESB Configs`, `Composite Exporter`, and `Registry Resources`. 
-2. On `ProxyServiceConfigs`, create new proxy called `CustomProxyServiceStockQuoteService` 
-3. On `ProxyServiceRegistryResources`, create new > other > Registry Resource(under WSO2BASS ). Click next the import from the file system.
+1. Create new integration project called `ProxyService` on the workspace folder but this time 3 Modules need to be created by checking the checkboxes for: `ESB Configs`, `Composite Exporter`, and `Registry Resources`. 
+
+2. On `ProxyServiceConfigs`, 
+	* create new > `Proxy Services` called `CustomProxyServiceStockQuoteService` 
+
+3. On `ProxyServiceRegistryResources`, 
+	* create new > Registry Resource. Click next the import from the file system.
 	* Click on browse file then locate the wsdl file in the Resources/Chapter_17_Proxy_Services/sample_proxy_1.wsdl 
-	* Enter save resource in `ProxyServiceRegistryResources` then click finish
-4. Go back to the `CustomProxyServiceStockQuoteService` property 
+
+4. Go back to the `CustomProxyServiceStockQuoteService` and click on its property 
 	* scroll down to the WSDL Type and select `REGISTRY_KEY`
 	* Click WSDL Key and select  *workspace > Carbon Application Registry Resources > ProxyServiceRegistryResources > sample_proxy_1_wsdl > `/_system/governance/custom/sample_proxy_1.wsdl`*
+
 5. Now create the proxy service flow
 	* Add Log Start mediator
 	* Add Send mediator (allowing sending request to the backend)
-	* On the src/main/synapse-config/endpoints, 
-		* create new endpoint called `SimpleStockQuote` 
+	* Go back `src/main/synapse-config/endpoints`, 
+		* create new `Endpoint` called `SimpleStockQuote` 
 		* add the address `http://localhost:9000/services/SimpleStockQuoteService` then click Finish
 		* Change the Address Endpoint Format to `SOAP 1.2`
 	* Go back to the `CustomProxyServiceStockQuoteService` and add the Defined Endpoints > `SimpleStockQuote` next to the Send mediator
@@ -281,16 +286,26 @@ Once the test successful, we are creating the proxy services where we register t
 6. To run the Proxy Service, we need to package by right click on `ProxyServiceCompositeExporter` then *Export Project artifacts and run* then select the following then click Finish
 	* ProxyServiceRegistryResources
 	* ProxyServiceConfigs
-7. Once exported, the WSDL file can be viewed and downloaded from http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl into either POSTMAN, SOAP UI or curl
-	* There is a Timeout issue
-	```
-		INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG START
-		[2022-02-15 00:16:54,760]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
-		[2022-02-15 00:16:54,776]  WARN {ConnectCallback} - Connection refused or failed for : localhost/127.0.0.1:9000
-		[2022-02-15 00:16:54,792]  WARN {EndpointContext} - Endpoint : SimpleStockQuote with address http://localhost:9000/services/SimpleStockQuoteService will be marked SUSPENDED as it failed
-		[2022-02-15 00:16:54,793]  WARN {EndpointContext} - Suspending endpoint : SimpleStockQuote with address http://localhost:9000/services/SimpleStockQuoteService - current suspend duration is : 30000ms - Next retry after : Tue Feb 15 00:17:24 EST 2022
 
+7. Make sure the stockquote_service.jar is running
+	```shell
+		#To run the web services, execute this with java 8.   
+		java8 -jar Resources/Chapter_17_Proxy_Services/stockquote_service.jar
 	```
+8. Once exported, the WSDL file can be viewed and downloaded from http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl into either POSTMAN, SOAP UI or curl
+	* For SOAP UI
+		* Create SOAP Project
+			* Project Name: `CustomProxyService`
+			* Initial WSDL: `http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl`
+		* Go to any CustomProxyBinding, edit the getQuote and replace question mark in the `<xsd:symbol>?</xsd:symbol>` with either `IBM` or `MSFT`. It should return the value while the WSO2 will logs the following
+		```shell
+			[2022-02-16 00:51:32,795]  INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG START
+			[2022-02-16 00:51:32,904]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
+			[2022-02-16 00:51:34,395]  INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG END
+
+		```
+
+
 
 
 
