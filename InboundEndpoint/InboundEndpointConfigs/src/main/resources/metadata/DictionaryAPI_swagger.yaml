@@ -1,0 +1,21 @@
+openapi: 3.0.1
+info:
+  title: DictionaryAPI
+  description: API Definition of DictionaryAPI
+  version: 1.0.0
+servers:
+- url: http://localhost:8290/api
+paths:
+  /dictionary/{word}:
+    get:
+      parameters:
+      - name: word
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        default:
+          description: Default response

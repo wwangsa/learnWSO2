@@ -75,7 +75,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		curl -v GET "http://localhost:8290/orders" -w "\n"
 	```
 
-	```shell
+	```log
 	# On Micro Integrator Server Log, it generates the following line when the curl is executed
 	2022-02-09 23:36:51,656]  INFO {LogMediator} - {api:EcommerceAPI} LOG MESSAGE = this is the default resource
 	```
@@ -213,7 +213,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 17. Proxy services (Project folder: ProxyService)
 
-The instructor use a SOAP service for the Proxy services example. The proxy services used to perform transformation and introduce functionality without changing the existing service. He provided 2 files:
+	The instructor use a SOAP service for the Proxy services example. The proxy services used to perform transformation and introduce functionality without changing the existing service. He provided 2 files:
 	1. Java based SOAP service. The webservice can be accessed at http://localhost:9000/services/SimpleStockQuoteService
 
 	```shell
@@ -258,55 +258,235 @@ The instructor use a SOAP service for the Proxy services example. The proxy serv
 			'
 		```
 
-Once the test successful, we are creating the proxy services where we register the WSDL file into the Registry Resources
+	Once the test successful, we are creating the proxy services where we register the WSDL file into the Registry Resources
 
-1. Create new integration project called `ProxyService` on the workspace folder but this time 3 Modules need to be created by checking the checkboxes for: `ESB Configs`, `Composite Exporter`, and `Registry Resources`. 
+	1. Create new integration project called `ProxyService` on the workspace folder but this time 3 Modules need to be created by checking the checkboxes for: `ESB Configs`, `Composite Exporter`, and `Registry Resources`. 
 
-2. On `ProxyServiceConfigs`, 
-	* create new > `Proxy Services` called `CustomProxyServiceStockQuoteService` 
+	2. On `ProxyServiceConfigs`, 
+		* create new > `Proxy Services` called `CustomProxyServiceStockQuoteService` 
 
-3. On `ProxyServiceRegistryResources`, 
-	* create new > Registry Resource. Click next the import from the file system.
-	* Click on browse file then locate the wsdl file in the Resources/Chapter_17_Proxy_Services/sample_proxy_1.wsdl 
+	3. On `ProxyServiceRegistryResources`, 
+		* create new > Registry Resource. Click next the import from the file system.
+		* Click on browse file then locate the wsdl file in the Resources/Chapter_17_Proxy_Services/sample_proxy_1.wsdl 
 
-4. Go back to the `CustomProxyServiceStockQuoteService` and click on its property 
-	* scroll down to the WSDL Type and select `REGISTRY_KEY`
-	* Click WSDL Key and select  *workspace > Carbon Application Registry Resources > ProxyServiceRegistryResources > sample_proxy_1_wsdl > `/_system/governance/custom/sample_proxy_1.wsdl`*
+	4. Go back to the `CustomProxyServiceStockQuoteService` and click on its property 
+		* scroll down to the WSDL Type and select `REGISTRY_KEY`
+		* Click WSDL Key and select  *workspace > Carbon Application Registry Resources > ProxyServiceRegistryResources > sample_proxy_1_wsdl > `/_system/governance/custom/sample_proxy_1.wsdl`*
 
-5. Now create the proxy service flow
-	* Add Log Start mediator
-	* Add Send mediator (allowing sending request to the backend)
-	* Go back `src/main/synapse-config/endpoints`, 
-		* create new `Endpoint` called `SimpleStockQuote` 
-		* add the address `http://localhost:9000/services/SimpleStockQuoteService` then click Finish
-		* Change the Address Endpoint Format to `SOAP 1.2`
-	* Go back to the `CustomProxyServiceStockQuoteService` and add the Defined Endpoints > `SimpleStockQuote` next to the Send mediator
-	* Add Log END mediator in the output flow and add another Send mediator
+	5. Now create the proxy service flow
+		* Add Log Start mediator
+		* Add Send mediator (allowing sending request to the backend)
+		* Go back `src/main/synapse-config/endpoints`, 
+			* create new `Endpoint` called `SimpleStockQuote` 
+			* add the address `http://localhost:9000/services/SimpleStockQuoteService` then click Finish
+			* Change the Address Endpoint Format to `SOAP 1.2`
+		* Go back to the `CustomProxyServiceStockQuoteService` and add the Defined Endpoints > `SimpleStockQuote` next to the Send mediator
+		* Add Log END mediator in the output flow and add another Send mediator
 
-6. To run the Proxy Service, we need to package by right click on `ProxyServiceCompositeExporter` then *Export Project artifacts and run* then select the following then click Finish
-	* ProxyServiceRegistryResources
-	* ProxyServiceConfigs
+	6. To run the Proxy Service, we need to package by right click on `ProxyServiceCompositeExporter` then *Export Project artifacts and run* then select the following then click Finish
+		* ProxyServiceRegistryResources
+		* ProxyServiceConfigs
 
-7. Make sure the stockquote_service.jar is running
-	```shell
-		#To run the web services, execute this with java 8.   
-		java8 -jar Resources/Chapter_17_Proxy_Services/stockquote_service.jar
-	```
-8. Once exported, the WSDL file can be viewed and downloaded from http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl into either POSTMAN, SOAP UI or curl
-	* For SOAP UI
-		* Create SOAP Project
-			* Project Name: `CustomProxyService`
-			* Initial WSDL: `http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl`
-		* Go to any CustomProxyBinding, edit the getQuote and replace question mark in the `<xsd:symbol>?</xsd:symbol>` with either `IBM` or `MSFT`. It should return the value while the WSO2 will logs the following
+	7. Make sure the stockquote_service.jar is running
 		```shell
-			[2022-02-16 00:51:32,795]  INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG START
-			[2022-02-16 00:51:32,904]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
-			[2022-02-16 00:51:34,395]  INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG END
+			#To run the web services, execute this with java 8.   
+			java8 -jar Resources/Chapter_17_Proxy_Services/stockquote_service.jar
+		```
+	8. Once exported, the WSDL file can be viewed and downloaded from http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl into either POSTMAN, SOAP UI or curl
+		* For SOAP UI
+			* Create SOAP Project
+				* Project Name: `CustomProxyService`
+				* Initial WSDL: `http://localhost:8290/services/CustomProxyServiceStockQuoteService?wsdl`
+			* Go to any CustomProxyBinding, edit the getQuote and replace question mark in the `<xsd:symbol>?</xsd:symbol>` with either `IBM` or `MSFT`. It should return the value while the WSO2 will logs the following
+			```log			
+				[2022-02-16 00:51:32,795]  INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG START
+				[2022-02-16 00:51:32,904]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
+				[2022-02-16 00:51:34,395]  INFO {LogMediator} - {proxy:CustomProxyServiceStockQuoteService} LOG MESSAGE = LOG END
 
+			```
+
+
+18. Inbound Endpoints - Listening Inbound Endpoints
+	
+	An inbound endpoint is a message entry point that can inject messages directly from the transport layer to the mediation layer, without going through the Axis engine.  One of the advantages of using Inbound Endpoints is in its ability to create inbound messaging channels dynamically. There are three types of inbound endpoints:
+	1. Listening Inbound Endpoints (Bidirectional) - HTTP/HTTPS, HL7, CXF WS-RM or Websocket
+	2. Polling Inbound Endpoints (One directional) - File, JMS or Kafka
+	3. Event-based Inbound Endpoints (Pulled once connection established) - MQTT or RabbitMQ
+
+	Note: Port 8285, 8290 and 8295 are being used. Make sure the ports are not taken already. Otherwise, it will give error.
+
+	Steps (mixing design and code view for quicker note):
+	1. Create Integration Project called `InboundEndpoint` with ESB Configs and CompositeExporter
+	2. Create RestAPI project called `DictionaryAPI` with context `/api`
+		
+		a. Set Resource properties -> URI Style: `URI_Template`, Uri Template: `/dictionary/{word}`, Protocol: `http`
+
+		b. InSequence - Set Log Description
+		```xml
+			<log description="LOG MESSAGE" level="custom">
+					<property expression="$ctx:uri.var.word" name="LOG MESSAGE"/>
+			</log>
 		```
 
+		c. InSequence - Set property from the log word mediator
+		```xml
+			<property description="SET PROPERTY" expression="$ctx:uri.var.word" name="wordProperty" scope="default" type="STRING"/>
+		```
+
+		d. InSequence - Set payloadFactory that display the word Property
+		```xml
+			<payloadFactory description="SET PAYLOAD" media-type="json">
+					<format>
+						{
+							"word":$1
+						}
+					</format>
+					<args>
+						<arg evaluator="xml" expression="$ctx:wordProperty"/>
+					</args>
+				</payloadFactory>
+		```
+
+		e. InSequence - Add Loopback to move to OutSequence
+		```xml
+			<loopback/>
+		```
+
+		f. OutSequence - Add Respond back to the client
+		```xml
+			<respond description="SEND OUT RESPONSE"/>
+		```
+
+	3. Create inbound endpoints called `ExposeRestApiIEP`
+
+		a. On the Inbound EP, set the Dispatch Filter Pattern to `/api/dictionary/.*`. The `.*` means it only work as filter dispatcher. Then change the Inbound Http Port: `8285` 
+
+		b. Add Sequence to sequence box. This create the following
+		```xml
+			<sequence name="Sequence" trace="disable" xmlns="http://ws.apache.org/ns/synapse"/>			
+		```
+
+		c. Double clicking sequence mediator and add log mediator in it. This will create `Sequence.xml` file
+		```xml
+			<log description="LOG MESSAGE" level="custom">
+        		<property name="LOG MESSAGE" value="THIS SEQUENCE HAS BEEN EXECUTED"/>
+    		</log>
+		```
+	
+	4. Create inbound endpoints called `HttpTestIEP` without dispatcher. This means sequence will actually be called.
+		a. On the Inbound EP, set the Port to `8295`  
+	
+	5. Crete an endpoint called `DictionaryApiEP` 
+	
+		a. Endpoint Type: `HTTP Endpoint`
+		b. URI Template: `http://localhost:8290/api/dictionary/{uri.var.wordIEP}`
 
 
+	6. Create another sequence called `SequenceIN`
+		
+		a. Drag Log mediator inside the sequence box
+		```xml
+			<log description="LOG MESSAGE" level="custom">
+        		<property name="LOG MESSAGE" value="SEQUENCE IN HAS BEEN EXECUTED"/>
+    		</log>
+		```
+		b. Add property mediator after that
+		```xml
+			<property description="SET PROPERTY" name="uri.var.wordIEP" scope="default" type="STRING" value="covid"/>
+		```
+
+		c. Add Send mediator then add  `DictionaryApiEP` defined endpoints
+		```xml
+			<send>
+				<endpoint key="DictionaryApiEP"/>
+			</send>
+		```
+	
+	7. Create another sequence to end the loop. It's called `SequenceOUT`
+
+		a. Add log mediator
+		```xml
+			<log description="LOG MESSAGE" level="custom">
+        		<property name="LOG MESSAGE" value="SEQUENCE OUT HAS BEEN EXECUTED"/>
+    		</log>
+		```
+
+		b. Add send mediator inside the sequence box
+		```xml
+			<send/>
+		```
+
+	8. Back to the `HttpTestIEP.xml` inbound-endpoints
+
+		a. Drag `SequenceIN` from Defined Sequences into sequence
+
+
+	9. Back to `SequenceIN.xml` 
+
+		a. change the Receiving Sequence Type: `Static`
+
+		b. set SequenceOUT directly on the code
+		```xml
+			<send receive="SequenceOUT">
+        		<endpoint key="DictionaryApiEP"/>
+    		</send>
+		```
+	10. Package artificats of the first draft by going to Exporter `Export Artificats Project and Run`. The application is successfully deployed when you see the listeners are ready in the console
+
+	```log
+		[2022-02-18 00:13:20,149]  INFO {HTTPEndpointManager} - Listener is already started for port : 8295
+		[2022-02-18 00:13:20,150]  INFO {HTTPEndpointManager} - Listener is already started for port : 8285
+	```
+
+	11. Open terminal window to test out
+		
+		a. Calling  `DictionaryAPI` REST API project
+		```shell
+			curl -v GET "http://localhost:8290/api/dictionary/Portugal"
+		```
+		Response
+		```json
+			{
+				"word":Portugal
+			}
+		```
+		Log Message
+		```log
+			[2022-02-18 00:18:29,431]  INFO {LogMediator} - {api:DictionaryAPI} LOG MESSAGE = Portugal
+		```
+		
+		b. Calling `HttpTestIEP` Inbound endpoint - through dispatch filter pattern exposing the API via http endpoint
+		```shell
+			curl -v GET "http://localhost:8285/api/dictionary/wso2" -w "\n"
+		```
+		Response
+		```json
+			{
+				"word":wso2
+			}
+		```
+		Log Message
+		```log
+			[2022-02-18 00:21:42,147]  INFO {LogMediator} - {api:DictionaryAPI} LOG MESSAGE = wso2
+		```
+
+		c. Calling `HttpTestIEP` Inbound endpoint - Since there is no dispatch filter, the sequencesIN is used
+		```shell
+			curl -v GET "http://localhost:8295" -w "\n"
+		```
+		Response
+		```json
+			{
+				"word":covid
+			}
+		```
+		Log Message
+		```log
+			[2022-02-18 00:23:57,526]  INFO {LogMediator} - {inboundendpoint:HttpTestIEP} LOG MESSAGE = SEQUENCE IN HAS BEEN EXECUTED
+			[2022-02-18 00:23:57,552]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
+			[2022-02-18 00:23:57,629]  INFO {LogMediator} - {api:DictionaryAPI} LOG MESSAGE = covid
+			[2022-02-18 00:23:57,697]  INFO {LogMediator} - {inboundendpoint:HttpTestIEP} LOG MESSAGE = SEQUENCE OUT HAS BEEN EXECUTED
+		```
 
 
 ## Section 3: Message processing units
