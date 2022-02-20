@@ -359,7 +359,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 	3. Create inbound endpoints called `ExposeRestApiIEP`
 
-		a. On the Inbound EP, set the Dispatch Filter Pattern to `/api/dictionary/.*`. The `.*` means it only work as filter dispatcher. Then change the Inbound Http Port: `8285` 
+		a. On the Inbound EP, set the Dispatch Filter Pattern to `/api/dictionary/.*`. The `.*` means it only work as filter dispatcher and it will ignore the log inside the sequence. Then change the Inbound Http Port: `8285` 
 
 		b. Add Sequence to sequence box. This create the following
 		```xml
@@ -374,11 +374,13 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		```
 	
 	4. Create inbound endpoints called `HttpTestIEP` without dispatcher. This means sequence will actually be called.
+		
 		a. On the Inbound EP, set the Port to `8295`  
 	
 	5. Crete an endpoint called `DictionaryApiEP` 
 	
 		a. Endpoint Type: `HTTP Endpoint`
+		
 		b. URI Template: `http://localhost:8290/api/dictionary/{uri.var.wordIEP}`
 
 
