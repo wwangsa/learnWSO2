@@ -263,10 +263,10 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	1. Create new integration project called `ProxyService` on the workspace folder but this time 3 Modules need to be created by checking the checkboxes for: `ESB Configs`, `Composite Exporter`, and `Registry Resources`. 
 
 	2. On `ProxyServiceConfigs`, 
-		* create new > `Proxy Services` called `CustomProxyServiceStockQuoteService` 
+		* create new > `Proxy Services` artifact called `CustomProxyServiceStockQuoteService` 
 
 	3. On `ProxyServiceRegistryResources`, 
-		* create new > Registry Resource. Click next the import from the file system.
+		* create new > Registry Resource . Click next the import from the file system.
 		* Click on browse file then locate the wsdl file in the Resources/Chapter_17_Proxy_Services/sample_proxy_1.wsdl 
 
 	4. Go back to the `CustomProxyServiceStockQuoteService` and click on its property 
@@ -277,10 +277,10 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		* Add Log Start mediator
 		* Add Send mediator (allowing sending request to the backend)
 		* Go back `src/main/synapse-config/endpoints`, 
-			* create new `Endpoint` called `SimpleStockQuote` 
+			* create new `Endpoint` artifact called `SimpleStockQuote` 
 			* add the address `http://localhost:9000/services/SimpleStockQuoteService` then click Finish
 			* Change the Address Endpoint Format to `SOAP 1.2`
-		* Go back to the `CustomProxyServiceStockQuoteService` and add the Defined Endpoints > `SimpleStockQuote` next to the Send mediator
+		* Go back to the `CustomProxyServiceStockQuoteService` artifact and add the Defined Endpoints > `SimpleStockQuote` next to the Send mediator
 		* Add Log END mediator in the output flow and add another Send mediator
 
 	6. To run the Proxy Service, we need to package by right click on `ProxyServiceCompositeExporter` then *Export Project artifacts and run* then select the following then click Finish
@@ -313,11 +313,13 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	2. Polling Inbound Endpoints (One directional) - File, JMS or Kafka
 	3. Event-based Inbound Endpoints (Pulled once connection established) - MQTT or RabbitMQ
 
-	Note: Port 8285, 8290 and 8295 are being used on this project. Make sure the ports are not taken already. Otherwise, it will give error.
+	Note: 
+	+ Port 8285, 8290 and 8295 are being used on this project. Make sure the ports are not taken already. Otherwise, it will give error.
+	+ This projects used a lot of sequence artifacts and mediation sequences / sequence mediator. The sequence mediator contains mediators that would be use repeatedly. Think of it as desigining a class and its methods in object oriented.
 
 	Steps (mixing design and code view for quicker note):
 	1. Create Integration Project called `InboundEndpoint` with ESB Configs and CompositeExporter
-	2. Create RestAPI project called `DictionaryAPI` with context `/api`. We're creating `http://localhost:8290/api/dictionary/{word}`endpoint.
+	2. Create RestAPI artifact called `DictionaryAPI` with context `/api`. We're creating `http://localhost:8290/api/dictionary/{word}`endpoint.
 		
 		a. Set Resource properties -> URI Style: `URI_Template`, Uri Template: `/dictionary/{word}`, Protocol: `http`
 
@@ -357,7 +359,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			<respond description="SEND OUT RESPONSE"/>
 		```
 
-	3. Create inbound endpoints called `ExposeRestApiIEP`. We are creating `http://localhost:8285/api/dictionary/{word}` endpoint that forwards the `{word}` query path to `http://localhost:8290/api/dictionary/{word}`
+	3. Create inbound endpoints artifact called `ExposeRestApiIEP`. We are creating `http://localhost:8285/api/dictionary/{word}` endpoint that forwards the `{word}` query path to `http://localhost:8290/api/dictionary/{word}`
 
 		a. On the Inbound EP, 
 			
@@ -376,17 +378,17 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
     		</log>
 		```
 	
-	4. Create inbound endpoints called `HttpTestIEP` without dispatcher. This means sequence will actually be called and transformed the message. We are creating `http://localhost:8295` endpoint that will generate `covid` result by passing the query path to`http://localhost:8290/api/dictionary/covid`
+	4. Create inbound endpoints artifact called `HttpTestIEP` without dispatcher. This means sequence will actually be called and transformed the message. We are creating `http://localhost:8295` endpoint that will generate `covid` result by passing the query path to`http://localhost:8290/api/dictionary/covid`
 		
 		a. On the Inbound EP, set the Port to `8295`  
 	
-		b. Create an endpoint called `DictionaryApiEP` 
+		b. Create an endpoint artifact called `DictionaryApiEP` 
 		
 		1. Endpoint Type: `HTTP Endpoint`			
 
 		2. URI Template: `http://localhost:8290/api/dictionary/{uri.var.wordIEP}`
 
-		c. Create another sequence called `SequenceIN`
+		c. Create another sequence artifact called `SequenceIN`
 			
 		1. Drag Log mediator inside the sequence box
 		```xml
@@ -406,7 +408,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			</send>
 		```
 	
-		d. Create another sequence to end the loop. It's called `SequenceOUT`
+		d. Create another sequence artifact to end the loop. It's called `SequenceOUT`
 
 		1. Add log mediator
 		```xml
