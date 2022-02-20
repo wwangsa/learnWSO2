@@ -357,7 +357,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			<respond description="SEND OUT RESPONSE"/>
 		```
 
-	3. Create inbound endpoints called `ExposeRestApiIEP`. We are creating `http://localhost:8290/api/dictionary/{word}` endpoint that forwards the `{word}` query path to `http://localhost:8290/api/dictionary/{word}`
+	3. Create inbound endpoints called `ExposeRestApiIEP`. We are creating `http://localhost:8285/api/dictionary/{word}` endpoint that forwards the `{word}` query path to `http://localhost:8290/api/dictionary/{word}`
 
 		a. On the Inbound EP, 
 			
