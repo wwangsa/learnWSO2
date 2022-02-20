@@ -313,11 +313,11 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	2. Polling Inbound Endpoints (One directional) - File, JMS or Kafka
 	3. Event-based Inbound Endpoints (Pulled once connection established) - MQTT or RabbitMQ
 
-	Note: Port 8285, 8290 and 8295 are being used. Make sure the ports are not taken already. Otherwise, it will give error.
+	Note: Port 8285, 8290 and 8295 are being used on this project. Make sure the ports are not taken already. Otherwise, it will give error.
 
 	Steps (mixing design and code view for quicker note):
 	1. Create Integration Project called `InboundEndpoint` with ESB Configs and CompositeExporter
-	2. Create RestAPI project called `DictionaryAPI` with context `/api`
+	2. Create RestAPI project called `DictionaryAPI` with context `/api`. We're creating `http://localhost:8290/api/dictionary/{word}`endpoint.
 		
 		a. Set Resource properties -> URI Style: `URI_Template`, Uri Template: `/dictionary/{word}`, Protocol: `http`
 
@@ -357,9 +357,12 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			<respond description="SEND OUT RESPONSE"/>
 		```
 
-	3. Create inbound endpoints called `ExposeRestApiIEP`
+	3. Create inbound endpoints called `ExposeRestApiIEP`. We are creating `http://localhost:8290/api/dictionary/{word}` endpoint that forwards the `{word}` query path to `http://localhost:8290/api/dictionary/{word}`
 
-		a. On the Inbound EP, set the Dispatch Filter Pattern to `/api/dictionary/.*`. The `.*` means it only work as filter dispatcher and it will ignore the log inside the sequence. Then change the Inbound Http Port: `8285` 
+		a. On the Inbound EP, 
+			
+		1. set the Dispatch Filter Pattern to `/api/dictionary/.*`. The `.*` means it only work as filter dispatcher and it will ignore the log inside the sequence and forward the response.			
+		2. Then change the Inbound Http Port: `8285` 
 
 		b. Add Sequence to sequence box. This create the following
 		```xml
@@ -373,74 +376,72 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
     		</log>
 		```
 	
-	4. Create inbound endpoints called `HttpTestIEP` without dispatcher. This means sequence will actually be called.
+	4. Create inbound endpoints called `HttpTestIEP` without dispatcher. This means sequence will actually be called and transformed the message. We are creating `http://localhost:8295` endpoint that will generate `covid` result by passing the query path to`http://localhost:8290/api/dictionary/covid`
 		
 		a. On the Inbound EP, set the Port to `8295`  
 	
-	5. Crete an endpoint called `DictionaryApiEP` 
-	
-		a. Endpoint Type: `HTTP Endpoint`
+		b. Create an endpoint called `DictionaryApiEP` 
 		
-		b. URI Template: `http://localhost:8290/api/dictionary/{uri.var.wordIEP}`
+		1. Endpoint Type: `HTTP Endpoint`			
 
+		2. URI Template: `http://localhost:8290/api/dictionary/{uri.var.wordIEP}`
 
-	6. Create another sequence called `SequenceIN`
-		
-		a. Drag Log mediator inside the sequence box
+		c. Create another sequence called `SequenceIN`
+			
+		1. Drag Log mediator inside the sequence box
 		```xml
 			<log description="LOG MESSAGE" level="custom">
-        		<property name="LOG MESSAGE" value="SEQUENCE IN HAS BEEN EXECUTED"/>
-    		</log>
+				<property name="LOG MESSAGE" value="SEQUENCE IN HAS BEEN EXECUTED"/>
+			</log>
 		```
-		b. Add property mediator after that
+		2. Add property mediator after that
 		```xml
 			<property description="SET PROPERTY" name="uri.var.wordIEP" scope="default" type="STRING" value="covid"/>
 		```
 
-		c. Add Send mediator then add  `DictionaryApiEP` defined endpoints
+		3. Add Send mediator then add  `DictionaryApiEP` defined endpoints
 		```xml
 			<send>
 				<endpoint key="DictionaryApiEP"/>
 			</send>
 		```
 	
-	7. Create another sequence to end the loop. It's called `SequenceOUT`
+		d. Create another sequence to end the loop. It's called `SequenceOUT`
 
-		a. Add log mediator
+		1. Add log mediator
 		```xml
 			<log description="LOG MESSAGE" level="custom">
-        		<property name="LOG MESSAGE" value="SEQUENCE OUT HAS BEEN EXECUTED"/>
-    		</log>
+				<property name="LOG MESSAGE" value="SEQUENCE OUT HAS BEEN EXECUTED"/>
+			</log>
 		```
 
-		b. Add send mediator inside the sequence box
+		2. Add send mediator inside the sequence box
 		```xml
 			<send/>
 		```
 
-	8. Back to the `HttpTestIEP.xml` inbound-endpoints
+		e. Back to the `HttpTestIEP.xml` inbound-endpoints
 
-		a. Drag `SequenceIN` from Defined Sequences into sequence
+		1. Drag `SequenceIN` from Defined Sequences into sequence
 
+		f. Back to `SequenceIN.xml` 
 
-	9. Back to `SequenceIN.xml` 
+		1. change the Receiving Sequence Type: `Static`
 
-		a. change the Receiving Sequence Type: `Static`
-
-		b. set SequenceOUT directly on the code
-		```xml
-			<send receive="SequenceOUT">
-        		<endpoint key="DictionaryApiEP"/>
-    		</send>
-		```
-	10. Package artificats of the first draft by going to Exporter `Export Artificats Project and Run`. The application is successfully deployed when you see the listeners are ready in the console
+		2. set SequenceOUT directly on the code
+			```xml
+				<send receive="SequenceOUT">
+					<endpoint key="DictionaryApiEP"/>
+				</send>
+			```
+	5. Package artificats of the first draft by going to Exporter `Export Artificats Project and Run`. The application is successfully deployed when you see the listeners are ready in the console
 
 	```log
 		[2022-02-18 00:13:20,149]  INFO {HTTPEndpointManager} - Listener is already started for port : 8295
 		[2022-02-18 00:13:20,150]  INFO {HTTPEndpointManager} - Listener is already started for port : 8285
 	```
 
-	11. Open terminal window to test out
+	6. Open terminal window to test out
 		
 		a. Calling  `DictionaryAPI` REST API project
 		```shell
