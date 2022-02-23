@@ -26,4 +26,25 @@
     <artifact name="SequenceOUT" groupId="com.example.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
         <file>src/main/synapse-config/sequences/SequenceOUT.xml</file>
     </artifact>
+    <artifact name="CSVDataFileProcessSeq" groupId="com.example.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/CSVDataFileProcessSeq.xml</file>
+    </artifact>
+    <artifact name="XMLDataFileProcessSeq" groupId="com.example.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/XMLDataFileProcessSeq.xml</file>
+    </artifact>
+    <artifact name="JSONDataFileProcessSeq" groupId="com.example.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/JSONDataFileProcessSeq.xml</file>
+    </artifact>
+    <artifact name="ErrorProcessSeq" groupId="com.example.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/ErrorProcessSeq.xml</file>
+    </artifact>
+    <artifact name="CSVDataFileProcessIEP" groupId="com.example.inbound-endpoint" version="1.0.0" type="synapse/inbound-endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/inbound-endpoints/CSVDataFileProcessIEP.xml</file>
+    </artifact>
+    <artifact name="XMLDataFileProcessIEP" groupId="com.example.inbound-endpoint" version="1.0.0" type="synapse/inbound-endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/inbound-endpoints/XMLDataFileProcessIEP.xml</file>
+    </artifact>
+    <artifact name="JSONDataFileProcessIEP" groupId="com.example.inbound-endpoint" version="1.0.0" type="synapse/inbound-endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/inbound-endpoints/JSONDataFileProcessIEP.xml</file>
+    </artifact>
 </artifacts>

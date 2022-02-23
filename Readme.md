@@ -306,7 +306,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			```
 
 
-18. Inbound Endpoints - Listening Inbound Endpoints
+18. Inbound Endpoints - Listening Inbound Endpoints (Project folder: InboundEndpoint)
 	
 	An inbound endpoint is a message entry point that can inject messages directly from the transport layer to the mediation layer, without going through the Axis engine.  One of the advantages of using Inbound Endpoints is in its ability to create inbound messaging channels dynamically. There are three types of inbound endpoints:
 	1. Listening Inbound Endpoints (Bidirectional) - HTTP/HTTPS, HL7, CXF WS-RM or Websocket
@@ -436,7 +436,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 					<endpoint key="DictionaryApiEP"/>
 				</send>
 			```
-	5. Package artificats of the first draft by going to Exporter `Export Artificats Project and Run`. The application is successfully deployed when you see the listeners are ready in the console
+	5. Package artifacts of the first draft by going to Exporter `Export Artificats Project and Run`. The application is successfully deployed when you see the listeners are ready in the console
 
 	```log
 		[2022-02-18 00:13:20,149]  INFO {HTTPEndpointManager} - Listener is already started for port : 8295
@@ -493,6 +493,249 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			[2022-02-18 00:23:57,697]  INFO {LogMediator} - {inboundendpoint:HttpTestIEP} LOG MESSAGE = SEQUENCE OUT HAS BEEN EXECUTED
 		```
 
+19. Inbound Endpoints - Polling Inbound Endpoints (Project folder: InboundEndpoint)
+
+	A polling inbound endpoint polls periodically for data and when data is available the data is injected to a given sequence. Continuing from previous project, this chapter will check when different file types are dropped to the certain folders and it will get copied over to different folder.
+
+	1. Create folders structures for this project
+	
+	```shell
+		mkdir -p /tmp/WSO2/Ch19/CSV/{In,Original,Out}
+		mkdir -p /tmp/WSO2/Ch19/JSON/{In,Original,Out}
+		mkdir -p /tmp/WSO2/Ch19/XML/{In,Original,Out}
+		cp ~/IntegrationStudio/8.0.0/workspace/Resources/Ch_19_Inbound_Endpoints_Polling/sample.csv /tmp/WSO2/Ch19/CSV/
+		cp ~/IntegrationStudio/8.0.0/workspace/Resources/Ch_19_Inbound_Endpoints_Polling/sample.json /tmp/WSO2/Ch19/JSON/
+		cp ~/IntegrationStudio/8.0.0/workspace/Resources/Ch_19_Inbound_Endpoints_Polling/test.xml /tmp/WSO2/Ch19/XML/
+		cd ~/IntegrationStudio/8.0.0/workspace/
+	```
+
+	2. Create new sequence artifacts called
+		
+		a. `CSVDataFileProcessSeq`
+		
+		* Drag Log to the sequence box
+			```xml
+				<log description="LOG CSV FILE CONTENT" level="full"/>
+			```
+		b. `XMLDataFileProcessSeq`
+
+		* Drag Log mediator to the sequence box
+			```xml
+				<log description="LOG XML FILE CONTENT" level="full"/>
+			```
+
+		* Drag another Log mediator to the sequence box. This log uses expression to read the country data inside the xml file.
+			```xml
+				<log description="LOG MESSAGE" level="custom">
+					<property expression="$body//orders//order//country" name="LOG COUNTRY"/>
+				</log>
+			```
+
+		c. Create new sequence artifact called `JSONDataFileProcessSeq`
+
+		* Drag Log mediator to the sequence box
+			```xml
+				<log description="LOG FILE JSON CONTENT" level="full"/>
+			```
+
+		* Drag another Log mediator to the sequence sbox. This log uses expression to read the country data inside the xml file.
+			```xml
+				<log description="LOG MESSAGE" level="custom">
+					<property expression="json-eval($.id)" name="LOG ID"/>
+				</log>
+			```
+
+		d. Create new sequence artifact called `ErrorProcessSeq`. 
+
+		This will monitor the error during the 3 sequences above
+
+		* Drag Log mediator to the sequence box
+			```xml
+				<log description="LOG ERROR DETAILS" level="full">
+					<property name="MESSAGE" value="An unexpected error occured!"/>
+					<property expression="$ctx:ERROR_CODE" name="ERROR_CODE"/>
+					<property expression="$ctx:ERROR_MESSAGE" name="ERROR_MESSAGE"/>
+					<property expression="$ctx:ERROR_DETAIL" name="ERROR_DETAIL"/>
+					<property expression="$ctx:ERROR_EXCEPTION" name="ERROR_EXCEPTION"/>
+				</log>
+			```
+
+	3. Create 3 different inbound endpoints artifacts called
+
+		a. `CSVDataFileProcessIEP`
+		
+		* Inbound Endpoint Creation Type: `File`
+		* Sequence: `CSVDataFileProcessSeq`
+		* Error Sequence: `ErrorProcessSeq` 
+		
+		Click Finish
+		
+		* Change InboundEP Mediator Properties:		
+			```xml
+				<parameters>
+					<parameter name="interval">1000</parameter>
+					<parameter name="sequential">true</parameter>
+					<parameter name="coordination">true</parameter>
+					<parameter name="transport.vfs.ContentType">text/plain</parameter>
+					<parameter name="transport.vfs.LockReleaseSameNode">false</parameter>
+					<parameter name="transport.vfs.AutoLockRelease">false</parameter>
+					<parameter name="transport.vfs.ActionAfterFailure">MOVE</parameter>
+					<parameter name="transport.vfs.FailedRecordsFileName">vfs-move-failed-records.properties</parameter>
+					<parameter name="transport.vfs.FailedRecordsFileDestination">repository/conf/</parameter>
+					<parameter name="transport.vfs.MoveFailedRecordTimestampFormat">dd-MM-yyyy HH:mm:ss</parameter>
+					<parameter name="transport.vfs.FailedRecordNextRetryDuration">3000</parameter>
+					<parameter name="transport.vfs.ActionAfterProcess">MOVE</parameter>
+					<parameter name="transport.vfs.FileURI">file:///tmp/WSO2/Ch19/CSV/In</parameter>
+					<parameter name="transport.vfs.MoveAfterFailure">/tmp/WSO2/Ch19/CSV/Original</parameter>
+					<parameter name="transport.vfs.ReplyFileName">response.xml</parameter>
+					<parameter name="transport.vfs.MoveTimestampFormat">yyy.MMMMM.dd.hh.mm.ss aaa</parameter>
+					<parameter name="transport.vfs.DistributedLock">false</parameter>
+					<parameter name="transport.vfs.FileNamePattern">.*\.csv</parameter>
+					<parameter name="transport.vfs.MoveAfterProcess">/tmp/WSO2/Ch19/CSV/Out</parameter>
+					<parameter name="transport.vfs.Locking">disable</parameter>
+					<parameter name="transport.vfs.SFTPUserDirIsRoot">false</parameter>
+					<parameter name="transport.vfs.FileSortAttribute">none</parameter>
+					<parameter name="transport.vfs.FileSortAscending">true</parameter>
+					<parameter name="transport.vfs.CreateFolder">true</parameter>
+					<parameter name="transport.vfs.Streaming">false</parameter>
+					<parameter name="transport.vfs.Build">false</parameter>
+					<parameter name="transport.vfs.UpdateLastModified">true</parameter>
+				</parameters>
+			```
+
+
+		b. `XMLDataFileProcessIEP`
+
+		* Inbound Endpoint Creation Type: `File`
+		* Sequence: `XMLDataFileProcessSeq`
+		* Error Sequence: `ErrorProcessSeq` 
+		
+		Click Finish
+		
+		* Change InboundEP Mediator Properties:		
+			```xml
+				<parameters>
+					<parameter name="interval">1000</parameter>
+					<parameter name="sequential">true</parameter>
+					<parameter name="coordination">true</parameter>
+					<parameter name="transport.vfs.ContentType">text/xml</parameter>
+					<parameter name="transport.vfs.LockReleaseSameNode">false</parameter>
+					<parameter name="transport.vfs.AutoLockRelease">false</parameter>
+					<parameter name="transport.vfs.ActionAfterFailure">MOVE</parameter>
+					<parameter name="transport.vfs.FailedRecordsFileName">vfs-move-failed-records.properties</parameter>
+					<parameter name="transport.vfs.FailedRecordsFileDestination">repository/conf/</parameter>
+					<parameter name="transport.vfs.MoveFailedRecordTimestampFormat">dd-MM-yyyy HH:mm:ss</parameter>
+					<parameter name="transport.vfs.FailedRecordNextRetryDuration">3000</parameter>
+					<parameter name="transport.vfs.ActionAfterProcess">MOVE</parameter>
+					<parameter name="transport.vfs.FileURI">file:///tmp/WSO2/Ch19/XML/In</parameter>
+					<parameter name="transport.vfs.MoveAfterFailure">/tmp/WSO2/Ch19/XML/Original</parameter>
+					<parameter name="transport.vfs.ReplyFileName">response.xml</parameter>
+					<parameter name="transport.vfs.MoveTimestampFormat">yyy.MMMMM.dd.hh.mm.ss aaa</parameter>
+					<parameter name="transport.vfs.DistributedLock">false</parameter>
+					<parameter name="transport.vfs.FileNamePattern">.*\.xml</parameter>
+					<parameter name="transport.vfs.MoveAfterProcess">/tmp/WSO2/Ch19/XML/Out</parameter>
+					<parameter name="transport.vfs.Locking">disable</parameter>
+					<parameter name="transport.vfs.SFTPUserDirIsRoot">false</parameter>
+					<parameter name="transport.vfs.FileSortAttribute">none</parameter>
+					<parameter name="transport.vfs.FileSortAscending">true</parameter>
+					<parameter name="transport.vfs.CreateFolder">true</parameter>
+					<parameter name="transport.vfs.Streaming">false</parameter>
+					<parameter name="transport.vfs.Build">false</parameter>
+					<parameter name="transport.vfs.UpdateLastModified">true</parameter>
+				</parameters>
+			```
+
+		c. `JSONDataFileProcessIEP`
+
+		* Inbound Endpoint Creation Type: `File`
+		* Sequence: `JSONDataFileProcessSeq`
+		* Error Sequence: `ErrorProcessSeq` 
+		
+		Click Finish
+		
+		* Change InboundEP Mediator Properties:		
+			```xml
+				<parameters>
+					<parameter name="interval">1000</parameter>
+					<parameter name="sequential">true</parameter>
+					<parameter name="coordination">true</parameter>
+					<parameter name="transport.vfs.ContentType">application/json</parameter>
+					<parameter name="transport.vfs.LockReleaseSameNode">false</parameter>
+					<parameter name="transport.vfs.AutoLockRelease">false</parameter>
+					<parameter name="transport.vfs.ActionAfterFailure">MOVE</parameter>
+					<parameter name="transport.vfs.FailedRecordsFileName">vfs-move-failed-records.properties</parameter>
+					<parameter name="transport.vfs.FailedRecordsFileDestination">repository/conf/</parameter>
+					<parameter name="transport.vfs.MoveFailedRecordTimestampFormat">dd-MM-yyyy HH:mm:ss</parameter>
+					<parameter name="transport.vfs.FailedRecordNextRetryDuration">3000</parameter>
+					<parameter name="transport.vfs.ActionAfterProcess">MOVE</parameter>
+					<parameter name="transport.vfs.FileURI">file:///tmp/WSO2/Ch19/JSON/In</parameter>
+					<parameter name="transport.vfs.MoveAfterFailure">/tmp/WSO2/Ch19/JSON/Original</parameter>
+					<parameter name="transport.vfs.ReplyFileName">response.xml</parameter>
+					<parameter name="transport.vfs.MoveTimestampFormat">yyy.MMMMM.dd.hh.mm.ss aaa</parameter>
+					<parameter name="transport.vfs.DistributedLock">false</parameter>
+					<parameter name="transport.vfs.FileNamePattern">.*\.json</parameter>
+					<parameter name="transport.vfs.MoveAfterProcess">/tmp/WSO2/Ch19/JSON/Out</parameter>
+					<parameter name="transport.vfs.Locking">disable</parameter>
+					<parameter name="transport.vfs.SFTPUserDirIsRoot">false</parameter>
+					<parameter name="transport.vfs.FileSortAttribute">none</parameter>
+					<parameter name="transport.vfs.FileSortAscending">true</parameter>
+					<parameter name="transport.vfs.CreateFolder">true</parameter>
+					<parameter name="transport.vfs.Streaming">false</parameter>
+					<parameter name="transport.vfs.Build">false</parameter>
+					<parameter name="transport.vfs.UpdateLastModified">true</parameter>
+				</parameters>
+			```
+
+	4. Package the artifacts that are created in this project by going to Exporter `Export Artificats Project and Run`. Deselect All previous artifacts and select the ones that we created above by Expanding Inbound EndpointConfigs:
+	
+		* com.example.sequence_._ErrorProcessSeq
+		* com.example.sequence_._XMLDataFileProcessSeq
+		* com.example.inbound-endpoint_._CSVDataFileProcessIEP
+		* com.example.inbound-endpoint_._XMLDataFileProcessIEP
+		* com.example.sequence_._JSONDataFileProcessSeq
+		* com.example.sequence_._CSVDataFileProcessSeq
+		* com.example.inbound-endpoint_._JSONDataFileProcessIEP
+
+		Click Finish
+
+	The application is successfully deployed when you see the listeners are ready in the console
+
+	```log
+		[2022-02-22 23:21:12,901]  INFO {AbstractQuartzTaskManager} - Task scheduled: [ESB_TASK][CSVDataFileProcessIEP-FILE--SYNAPSE_INBOUND_ENDPOINT].
+		[2022-02-22 23:21:12,916]  INFO {AbstractQuartzTaskManager} - Task scheduled: [ESB_TASK][XMLDataFileProcessIEP-FILE--SYNAPSE_INBOUND_ENDPOINT].
+		[2022-02-22 23:21:12,977]  INFO {AbstractQuartzTaskManager} - Task scheduled: [ESB_TASK][JSONDataFileProcessIEP-FILE--SYNAPSE_INBOUND_ENDPOINT].
+
+	```
+
+	5. Do the following tests for each file type. See how the file copied to the `In` folder got moved to `Out` within 1 second (polling time):
+		
+		Use Windows Explorer/Finder/Files app to the following folder `/tmp/WSO2/Ch19/`
+
+		a. Go to CSV folder and copy `sample.csv` to `In` folder. The file will be moved to `Out` folder
+		```log
+			[2022-02-22 23:23:19,219]  INFO {LogMediator} - {inboundendpoint:CSVDataFileProcessIEP} To: , MessageID: urn:uuid:DD330314E1061987CE1645590199208, Direction: request, Envelope: <?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><text xmlns="http://ws.apache.org/commons/ns/payload">1,Nelson,Dias,Portugal,Developer&#xd;
+			2,Romeo,Santos,RepDominicana,Singer</text></soapenv:Body></soapenv:Envelope>
+		```	
+		 
+		b. Go to XML folder and copy `test.xml` to `In` folder. The file will be moved to `Out` folder
+		```log
+		[2022-02-22 23:31:28,932]  INFO {LogMediator} - {inboundendpoint:XMLDataFileProcessIEP} To: , MessageID: urn:uuid:DD330314E1061987CE1645590688920, Direction: request, Envelope: <?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing"><soapenv:Body>
+				<orders>
+					<order>
+						<country>Portugal</country>
+					</order>
+				</orders>
+			</soapenv:Body></soapenv:Envelope>
+		[2022-02-22 23:31:28,960]  INFO {LogMediator} - {inboundendpoint:XMLDataFileProcessIEP} LOG COUNTRY = Portugal
+			
+		```
+		
+		c. Go to JSON folder and copy `sample.json` to `In` folder. The file will be moved to `Out` folder
+		```log
+			[2022-02-22 23:35:49,978]  INFO {LogMediator} - {inboundendpoint:JSONDataFileProcessIEP} To: , MessageID: urn:uuid:DD330314E1061987CE1645590949979, Direction: request, Payload: {  "id": 12345, "id_str": "12345", "array": [ 1, 2, [ [], [{"inner_id": 6789}] ] ], "name": null, "object": {}, "$schema_location": "unknown", "12X12": "image12x12.png" }
+			[2022-02-22 23:35:49,992]  INFO {LogMediator} - {inboundendpoint:JSONDataFileProcessIEP} LOG ID = 12345
+			
+		```
 
 ## Section 3: Message processing units
 

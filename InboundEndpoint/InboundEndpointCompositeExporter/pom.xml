@@ -14,69 +14,55 @@
   <name>InboundEndpointCompositeExporter</name>
   <description>InboundEndpointCompositeExporter</description>
   <properties>
-    <com.example.sequence_._SequenceOUT>capp/EnterpriseServiceBus</com.example.sequence_._SequenceOUT>
-    <com.example.inbound-endpoint_._ExposeRestApiIEP>capp/EnterpriseServiceBus</com.example.inbound-endpoint_._ExposeRestApiIEP>
+    <com.example.sequence_._XMLDataFileProcessSeq>capp/EnterpriseServiceBus</com.example.sequence_._XMLDataFileProcessSeq>
     <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,synapse/metadata=yaml,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
-    <com.example.sequence_._Sequence>capp/EnterpriseServiceBus</com.example.sequence_._Sequence>
-    <com.example.sequence_._SequenceIN>capp/EnterpriseServiceBus</com.example.sequence_._SequenceIN>
-    <com.example.metadata_._DictionaryAPI_swagger>capp/EnterpriseServiceBus</com.example.metadata_._DictionaryAPI_swagger>
-    <com.example.metadata_._DictionaryAPI_metadata>capp/EnterpriseServiceBus</com.example.metadata_._DictionaryAPI_metadata>
-    <com.example.endpoint_._DictionaryApiEP>capp/EnterpriseServiceBus</com.example.endpoint_._DictionaryApiEP>
-    <com.example.inbound-endpoint_._HttpTestIEP>capp/EnterpriseServiceBus</com.example.inbound-endpoint_._HttpTestIEP>
-    <com.example.api_._DictionaryAPI>capp/EnterpriseServiceBus</com.example.api_._DictionaryAPI>
+    <com.example.sequence_._ErrorProcessSeq>capp/EnterpriseServiceBus</com.example.sequence_._ErrorProcessSeq>
+    <com.example.inbound-endpoint_._CSVDataFileProcessIEP>capp/EnterpriseServiceBus</com.example.inbound-endpoint_._CSVDataFileProcessIEP>
+    <com.example.inbound-endpoint_._XMLDataFileProcessIEP>capp/EnterpriseServiceBus</com.example.inbound-endpoint_._XMLDataFileProcessIEP>
+    <com.example.sequence_._CSVDataFileProcessSeq>capp/EnterpriseServiceBus</com.example.sequence_._CSVDataFileProcessSeq>
+    <com.example.sequence_._JSONDataFileProcessSeq>capp/EnterpriseServiceBus</com.example.sequence_._JSONDataFileProcessSeq>
+    <com.example.inbound-endpoint_._JSONDataFileProcessIEP>capp/EnterpriseServiceBus</com.example.inbound-endpoint_._JSONDataFileProcessIEP>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>com.example.metadata</groupId>
-      <artifactId>DictionaryAPI_swagger</artifactId>
+      <groupId>com.example.inbound-endpoint</groupId>
+      <artifactId>CSVDataFileProcessIEP</artifactId>
       <version>1.0.0</version>
-      <type>yaml</type>
+      <type>xml</type>
     </dependency>
     <dependency>
       <groupId>com.example.sequence</groupId>
-      <artifactId>SequenceOUT</artifactId>
+      <artifactId>CSVDataFileProcessSeq</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>com.example.inbound-endpoint</groupId>
-      <artifactId>HttpTestIEP</artifactId>
+      <artifactId>XMLDataFileProcessIEP</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>
     <dependency>
-      <groupId>com.example.endpoint</groupId>
-      <artifactId>DictionaryApiEP</artifactId>
+      <groupId>com.example.sequence</groupId>
+      <artifactId>ErrorProcessSeq</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>
     <dependency>
-      <groupId>com.example.api</groupId>
-      <artifactId>DictionaryAPI</artifactId>
+      <groupId>com.example.sequence</groupId>
+      <artifactId>XMLDataFileProcessSeq</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>com.example.inbound-endpoint</groupId>
-      <artifactId>ExposeRestApiIEP</artifactId>
-      <version>1.0.0</version>
-      <type>xml</type>
-    </dependency>
-    <dependency>
-      <groupId>com.example.metadata</groupId>
-      <artifactId>DictionaryAPI_metadata</artifactId>
-      <version>1.0.0</version>
-      <type>yaml</type>
-    </dependency>
-    <dependency>
-      <groupId>com.example.sequence</groupId>
-      <artifactId>Sequence</artifactId>
+      <artifactId>JSONDataFileProcessIEP</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>com.example.sequence</groupId>
-      <artifactId>SequenceIN</artifactId>
+      <artifactId>JSONDataFileProcessSeq</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>
