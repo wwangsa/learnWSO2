@@ -1,0 +1,28 @@
+openapi: 3.0.1
+info:
+  title: WeatherAPI
+  description: API Definition of WeatherAPI
+  version: 1.0.0
+servers:
+- url: http://localhost:8290/api
+paths:
+  /weather/{country}/{city}:
+    get:
+      parameters:
+      - name: country
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: city
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        default:
+          description: Default response

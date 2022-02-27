@@ -737,6 +737,124 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			
 		```
 
+20. Scheduled Tasks (Project folder: ScheduledTask)
+
+	Create task that runs periodically. It can inject messages, define endpoints, proxy services, and so on. This project uses scheduled task to pass the country and location in xml message to a proxy. From proxy, it passed on to the Endpoint then, from Endpoint, it passed to the WeatherAPI. 
+
+	1. Create new integration studio project called `ScheduledTask`
+
+	2. Create new REST API artifacts called `WeatherAPI` with context `API`
+		
+		a. On the Resource, set the following
+		```xml
+			<resource methods="GET" protocol="http" uri-template="/weather/{country}/{city}">
+		```
+		
+		b. Add the following mediators to the inSequence
+		```xml
+				<inSequence>
+					<log description="LOG START" level="custom">
+						<property name="LOG MESSAGE" value="LOG START API"/>
+					</log>
+					<payloadFactory description="SET PAYLOAD" media-type="json">
+						<format>{
+							"country":$1,
+							"city": $2,
+							"weather": "sunny"
+						}</format>
+						<args>
+							<arg evaluator="xml" expression="$ctx:uri.var.country"/>
+							<arg evaluator="xml" expression="$ctx:uri.var.city"/>
+						</args>
+					</payloadFactory>
+					<log description="LOG END" level="custom">
+						<property name="LOG MESSAGE" value="LOG END API"/>
+					</log>
+					<loopback/>
+				</inSequence>
+		```
+		c. Add the following mediator to the outSequence
+		```xml
+			<outSequence>
+            	<respond description="SEND RESPONSE"/>
+        	</outSequence>
+		```
+	3. Create an Endpoint artifact called `WeatherApiEP` 
+	
+		a. Endpoint Type: `HTTP Endpoint` (This always bite back and easily forgotten to change)
+
+		b. URI Template: `http://localhost:8290/api/weather/{uri.var.countryProxy}/{uri.var.cityProxy}`
+
+	4. Create a Proxy Service artifact called `CustomWeatherApiProxy`
+
+		a. Add the following mediators to the outSequence
+		```xml
+			<inSequence>
+				<property description="SET COUNTRY PROXY" expression="//request/location/country" name="uri.var.countryProxy" scope="default" type="STRING"/>
+				<property description="SET CITY PROXY" expression="//request/location/city" name="uri.var.cityProxy" scope="default" type="STRING"/>
+				<log description="LOG LOCATION" level="custom">
+					<property expression="$ctx:uri.var.countryProxy" name="LOG COUNTRY"/>
+					<property expression="$ctx:uri.var.cityProxy" name="LOG CITY"/>
+				</log>
+				<send>
+					<endpoint key="WeatherApiEP"/>
+				</send>
+			</inSequence>
+		```
+
+		b. Add the following mediator to the outSequence
+		```xml
+			<outSequence>
+				<log description="LOG OUTPUT" level="full"/>
+			</outSequence>
+		```
+	
+	5. Create Scheduled Task artifact called `InjectRequestWeatherApiTask`. We keep it `Simple`, not using cron method and set the count to `2` and Interval to `10` seconds. This will run the proxy twice within 10 seconds
+
+		a. Once artifact is created, click on `Task Implementation Properties`, set
+			
+		1. **injectTo** with value `Proxy`
+
+		2. **message** to `XML` with value (if there is any problem, try linearize the xml into single line)
+		```xml
+			<request>
+				<location>
+					<city>Lisbon</city>
+					<country>Portugal</country>
+				</location>
+			</request>
+		```
+
+		3. **proxyName** with value `CustomWeatherApiProxy`
+
+	6. Export project artifacts and Run
+	```log
+	[2022-02-27 00:46:36,721]  INFO {AbstractQuartzTaskManager} - Task scheduled: [ESB_TASK][InjectRequestWeatherApiTask].
+	[2022-02-27 00:46:37,279]  INFO {LogMediator} - {proxy:CustomWeatherApiProxy} LOG COUNTRY = Portugal, LOG CITY = Lisbon
+	[2022-02-27 00:46:37,467]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
+	[2022-02-27 00:46:37,674]  INFO {LogMediator} - {api:WeatherAPI} LOG MESSAGE = LOG START API
+	[2022-02-27 00:46:37,745]  INFO {LogMediator} - {api:WeatherAPI} LOG MESSAGE = LOG END API
+	[2022-02-27 00:46:37,895]  INFO {LogMediator} - {proxy:CustomWeatherApiProxy} To: http://www.w3.org/2005/08/addressing/anonymous, WSAction: , SOAPAction: , MessageID: urn:uuid:cabb9503-19ea-4610-94e0-488512a2473a, correlation_id: c6ff23f0-9363-4c78-a0da-4a3acb1c472c, Direction: response, Payload: {
+		"country":Portugal,
+		"city": Lisbon,
+		"weather": "sunny"
+	}
+	[2022-02-27 00:46:39,519]  INFO {AuthenticationHandlerAdapter} - User admin logged in successfully
+	[2022-02-27 00:46:39,605]  INFO {ServiceComponent} - Initializing Security parameters
+	[2022-02-27 00:46:46,732]  INFO {LogMediator} - {proxy:CustomWeatherApiProxy} LOG COUNTRY = Portugal, LOG CITY = Lisbon
+	[2022-02-27 00:46:46,743]  INFO {LogMediator} - {api:WeatherAPI} LOG MESSAGE = LOG START API
+	[2022-02-27 00:46:46,744]  INFO {LogMediator} - {api:WeatherAPI} LOG MESSAGE = LOG END API
+	[2022-02-27 00:46:46,767]  INFO {LogMediator} - {proxy:CustomWeatherApiProxy} To: http://www.w3.org/2005/08/addressing/anonymous, WSAction: , SOAPAction: , MessageID: urn:uuid:0ca99bd0-f233-4cfd-b9a4-21a999b4e3ae, correlation_id: 11d316fe-31c4-4687-b361-0547b434468a, Direction: response, Payload: {
+		"country":Portugal,
+		"city": Lisbon,
+		"weather": "sunny"
+	}
+	```
+
+
+
+
+
 ## Section 3: Message processing units
 
 
