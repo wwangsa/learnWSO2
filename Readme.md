@@ -852,10 +852,65 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	```
 
 
-
-
-
 ## Section 3: Message processing units
+
+22. Send Mediator (Project folder: HealthcareProject)
+
+	This project is allowing healthcare patients to search for specialists by providing the category and return the list back to the patient. One thing to note that send mediator's role is to send the request message to the healthcare service endpoint. It used to send messages to synapse engine. It also copies any message's contexts and properties from the current message context to the replied message received on the execution of Send operation. Since we're not defining the receiving sequence, the default behavior will use outSequence to handle the reponse.
+
+	1. Create New Integration Project called `HealthcareProject` with the following modules: ESB Configs, Composite Exporter, Registry Resources, Connector Exporter.
+
+	2. Start the web services provided for this chapter. We can use java decompiler app to view the `Hospital-Service-JDK11-2.0.0.jar` code that run these backend services. The instructor uses [JD-GUI app](https://github.com/java-decompiler/jd-gui).
+		```shell		
+		# Go to the resources folder
+		java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
+		# To test out, run this in another terminal
+		curl -v GET "http://localhost:9090/healthcare/surgery"
+		curl -v GET "http://localhost:9090/healthcare/ent"
+		```	
+
+	3. Back to WSO2, create Endpoints artifacts that point to the java services
+
+		a. Endpoint Type: `HTTP Endpoint` 
+		
+		b. URI Template: `http://localhost:9090/healthcare/{uri.var.category}`
+
+	4. Create REST API artifacts called `HealthcareAPI` with context `/healthcare`. The API handles client request. Add the following mediators to the API. 
+		```xml
+		<resource methods="GET" uri-template="/querydoctor/{category}">
+			<inSequence>
+				<log description="LOG WELCOME" level="custom">
+					<property name="LOG MESSAGE" value="WELCOME TO HEALTHCARE SERVICE"/>
+				</log>
+				<log description="LOG BEFORE" level="custom">
+					<property name="LOG MESSAGE" value="LOG BEFORE SEND"/>
+				</log>
+				<send>
+					<endpoint key="QueryDoctorEP"/>
+				</send>
+			</inSequence>
+			<outSequence>
+				<log description="LOG END" level="custom">
+					<property name="LOG MESSAGE" value="LOG END"/>
+				</log>
+				<send/>
+			</outSequence>
+			<faultSequence/>
+		</resource>
+		```
+	5. Export Project Artifacts and Run
+		```shell
+			curl -v GET "http://localhost:8290/healthcare/querydoctor/surgery"
+
+			#WSO2 Logs
+			2022-02-28 00:58:29,035]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = WELCOME TO HEALTHCARE SERVICE
+			[2022-02-28 00:58:29,036]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = LOG BEFORE SEND
+			[2022-02-28 00:58:29,052]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
+			[2022-02-28 00:58:29,108]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = LOG END
+		```	
+
+
+
 
 
 ## Section 4: Message exit points
