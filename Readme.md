@@ -27,6 +27,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 ## Section 1: Introduction
 
+![Big Picture for Ch 6, 12-17](Resources/screenshots/chbasics.png)
+
 6. Create the project Zero (Project folder: ProjectZero)
 	* When creating new integration project, use the "New Integration Project". This will create a folder that contains with *ESBConfigs* and *CompositeExporter* folders undeneath it.
 	* To add REST API Project, click on the *ESBConfigs* folder > New> REST API > Create A New API Artifact
@@ -307,7 +309,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 
 18. Inbound Endpoints - Listening Inbound Endpoints (Project folder: InboundEndpoint)
-	
+
+![Big Picture for Ch 18](Resources/screenshots/ch18.png)	
 	An inbound endpoint is a message entry point that can inject messages directly from the transport layer to the mediation layer, without going through the Axis engine.  One of the advantages of using Inbound Endpoints is in its ability to create inbound messaging channels dynamically. There are three types of inbound endpoints:
 	1. Listening Inbound Endpoints (Bidirectional) - HTTP/HTTPS, HL7, CXF WS-RM or Websocket
 	2. Polling Inbound Endpoints (One directional) - File, JMS or Kafka
@@ -366,7 +369,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		1. set the Dispatch Filter Pattern to `/api/dictionary/.*`. The `.*` means it only work as filter dispatcher and it will ignore the log inside the sequence and forward the response.			
 		2. Then change the Inbound Http Port: `8285` 
 
-		b. Add Sequence to sequence box. This create the following
+		b. Since we could not add log and other mediators in the Inbound Endpoint, we have to add sequence. Drag the sequence mediator to the sequence box and double click it. This create `Sequence.xml` file under sequences folder. The codes behind the sequence.xml is the following
 		```xml
 			<sequence name="Sequence" trace="disable" xmlns="http://ws.apache.org/ns/synapse"/>			
 		```
@@ -460,7 +463,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			[2022-02-18 00:18:29,431]  INFO {LogMediator} - {api:DictionaryAPI} LOG MESSAGE = Portugal
 		```
 		
-		b. Calling `HttpTestIEP` Inbound endpoint - through dispatch filter pattern exposing the API via http endpoint
+		b. Calling `ExposeRestApiIEP` Inbound endpoint - through dispatch filter pattern exposing the API via http endpoint.Since we're using dispatch filter pattern, the sequence is being ignored.
 		```shell
 			curl -v GET "http://localhost:8285/api/dictionary/wso2" -w "\n"
 		```
