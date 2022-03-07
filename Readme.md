@@ -498,6 +498,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 19. Inbound Endpoints - Polling Inbound Endpoints (Project folder: InboundEndpoint)
 
+![Big Picture for Ch 19](Resources/screenshots/ch19.png)
 	A polling inbound endpoint polls periodically for data and when data is available the data is injected to a given sequence. Continuing from previous project, this chapter will check when different file types are dropped to the certain folders and it will get copied over to different folder.
 
 	1. Create folders structures for this project
@@ -742,6 +743,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 20. Scheduled Tasks (Project folder: ScheduledTask)
 
+![Big Picture for Ch 20](Resources/screenshots/ch20.png)
 	Create task that runs periodically. It can inject messages, define endpoints, proxy services, and so on. This project uses scheduled task to pass the country and location in xml message to a proxy. From proxy, it passed on to the Endpoint then, from Endpoint, it passed to the WeatherAPI. 
 
 	1. Create new integration studio project called `ScheduledTask`
