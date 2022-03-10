@@ -19,3 +19,24 @@ paths:
       responses:
         default:
           description: Default response
+  /categories/{category}/reserve:
+    post:
+      parameters:
+      - name: category
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Sample Payload
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  type: object
+        required: false
+      responses:
+        default:
+          description: Default response

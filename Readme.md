@@ -240,7 +240,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			curl --location --request POST 'http://localhost:9000/services/SimpleStockQuoteService' \
 			--header 'Content-Type: text/xml; charset=utf-8' \
 			--header 'SOAPAction: urn:getQuote' \
-			--data @Resources/Chapter_17_Proxy_Services/requestBody.xml
+			--data @Resources/Ch_17_Proxy_Services/requestBody.xml
 		```
 		* Without using xml file
 		```shell
@@ -861,6 +861,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 22. Send Mediator (Project folder: HealthcareProject)
 
+	![Big Picture for Ch 22](Resources/screenshots/ch22.png)
+
 	This project is allowing healthcare patients to search for specialists by providing the category and return the list back to the patient. One thing to note that send mediator's role is to send the request message to the healthcare service endpoint. It used to send messages to synapse engine. It also copies any message's contexts and properties from the current message context to the replied message received on the execution of Send operation. Since we're not defining the receiving sequence, the default behavior will use outSequence to handle the reponse.
 
 	1. Create New Integration Project called `HealthcareProject` with the following modules: ESB Configs, Composite Exporter, Registry Resources, Connector Exporter.
@@ -914,7 +916,125 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			[2022-02-28 00:58:29,108]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = LOG END
 		```	
 
+23. Switch Mediator (Project folder: HealthcareProject)
 
+![Big Picture for Ch 23](Resources/screenshots/ch23.png)
+
+Creating message routing logic that will forward to relevant hospital backend service depends on the content of the payloads.
+
+	1. Create 3 new endpoints called
+	
+		a. GrandOaks
+			
+		* method: `POST`
+		* uri-template: `http://localhost:9090/grandoaks/categories/{uri.var.category}/reserve`
+
+		b. Clemency
+			
+		* method: `POST`
+		* uri-template: `http://localhost:9090/clemency/categories/{uri.var.category}/reserve`
+
+		c. PineValley
+
+		* method: `POST`
+		* uri-template: `http://localhost:9090/pinevalley/categories/{uri.var.category}/reserve`
+
+	2. Create another API Resource inside the HealthcareAPI
+	
+		`json-eval` is used in property mediator to read the hospital name from the payload. Switch mediator is used for logic (Enter `Source XPath` to define the logic).
+
+		```xml
+			<resource methods="POST" uri-template="/categories/{category}/reserve">
+				<inSequence>
+					<log description="LOG START" level="custom">
+						<property name="LOG MESSAGE" value="&quot;LOG RESERVATION START&quot;"/>
+					</log>
+					<property description="SET HOSPITAL" expression="json-eval($.hospital)" name="hospitalProperty" scope="default" type="STRING"/>
+					<switch source="$ctx:hospitalProperty">
+						<case regex="grand oak community hospital">
+							<log description="LOG HOSPITAL" level="custom">
+								<property expression="fn:concat(&quot;Routing to &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
+							</log>
+							<send>
+								<endpoint key="GrandOakEP"/>
+							</send>
+						</case>
+						<case regex="clemency medical center">
+							<log description="LOG HOSPITAL" level="custom">
+								<property expression="fn:concat(&quot;Routing to &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
+							</log>
+							<send>
+								<endpoint key="ClemencyEP"/>
+							</send>
+						</case>
+						<case regex="pine valley community hospital">
+							<log description="LOG HOSPITAL" level="custom">
+								<property expression="fn:concat(&quot;Routing to &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
+							</log>
+							<send>
+								<endpoint key="PineValleyEP"/>
+							</send>
+						</case>
+						<default>
+							<log description="LOG DEFAULT" level="custom">
+								<property expression="fn:concat(&quot;Invalid Hospital &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
+							</log>
+							<respond description="SEND OUT RESPONSE"/>
+						</default>
+					</switch>
+				</inSequence>
+				<outSequence>
+					<send/>
+				</outSequence>
+				<faultSequence/>
+			</resource>
+		```
+
+
+		```shell
+			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
+			--header "Content-Type:application/json" \
+			--data @Resources/Ch_23_Switch_Mediator/PatientExample.json -w "\n"
+
+		```
+
+		```log
+			[2022-03-10 01:08:40,627]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+			[2022-03-10 01:08:40,629]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to grand oak community hospital
+			[2022-03-10 01:14:37,285]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+			[2022-03-10 01:14:37,287]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to clemency medical center
+		```
+
+		```json
+			{
+				"appointmentNumber": 7,
+				"doctor": {
+					"name": "thomas collins",
+					"hospital": "grand oak community hospital",
+					"category": "surgery",
+					"availability": "9.00 a.m - 11.00 a.m",
+					"fee": 7000.0
+				},
+				"patient": {
+					"name": "Nelson Dias",
+					"dob": "1940-03-19",
+					"ssn": "234-23-525",
+					"address": "Lisbon",
+					"phone": "8770586755",
+					"email": "nelson.dias@wso2.com"
+				},
+				"fee": 7000.0,
+				"confirmed": false
+			}
+		```
+
+		Change the hospital on PatientExample.json to `clemency medical center`
+		
+		```json
+			{
+				"status": "Doctor thomas collins is not available in clemency medical center"
+			}
+		```
 
 
 
