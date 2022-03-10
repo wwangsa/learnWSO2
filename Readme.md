@@ -310,7 +310,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 18. Inbound Endpoints - Listening Inbound Endpoints (Project folder: InboundEndpoint)
 
-![Big Picture for Ch 18](Resources/screenshots/ch18.png)	
+	![Big Picture for Ch 18](Resources/screenshots/ch18.png)	
+	
 	An inbound endpoint is a message entry point that can inject messages directly from the transport layer to the mediation layer, without going through the Axis engine.  One of the advantages of using Inbound Endpoints is in its ability to create inbound messaging channels dynamically. There are three types of inbound endpoints:
 	1. Listening Inbound Endpoints (Bidirectional) - HTTP/HTTPS, HL7, CXF WS-RM or Websocket
 	2. Polling Inbound Endpoints (One directional) - File, JMS or Kafka
@@ -498,7 +499,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 19. Inbound Endpoints - Polling Inbound Endpoints (Project folder: InboundEndpoint)
 
-![Big Picture for Ch 19](Resources/screenshots/ch19.png)
+	![Big Picture for Ch 19](Resources/screenshots/ch19.png)
+
 	A polling inbound endpoint polls periodically for data and when data is available the data is injected to a given sequence. Continuing from previous project, this chapter will check when different file types are dropped to the certain folders and it will get copied over to different folder.
 
 	1. Create folders structures for this project
@@ -743,7 +745,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 20. Scheduled Tasks (Project folder: ScheduledTask)
 
-![Big Picture for Ch 20](Resources/screenshots/ch20.png)
+	![Big Picture for Ch 20](Resources/screenshots/ch20.png)
+	
 	Create task that runs periodically. It can inject messages, define endpoints, proxy services, and so on. This project uses scheduled task to pass the country and location in xml message to a proxy. From proxy, it passed on to the Endpoint then, from Endpoint, it passed to the WeatherAPI. 
 
 	1. Create new integration studio project called `ScheduledTask`
