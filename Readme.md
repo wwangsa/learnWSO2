@@ -918,9 +918,9 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 23. Switch Mediator (Project folder: HealthcareProject)
 
-![Big Picture for Ch 23](Resources/screenshots/ch23.png)
+	![Big Picture for Ch 23](Resources/screenshots/ch23.png)
 
-Creating message routing logic that will forward to relevant hospital backend service depends on the content of the payloads.
+	Creating message routing logic that will forward to relevant hospital backend service depends on the content of the payloads.
 
 	1. Create 3 new endpoints called
 	
