@@ -746,7 +746,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 20. Scheduled Tasks (Project folder: ScheduledTask)
 
 	![Big Picture for Ch 20](Resources/screenshots/ch20.png)
-	
+
 	Create task that runs periodically. It can inject messages, define endpoints, proxy services, and so on. This project uses scheduled task to pass the country and location in xml message to a proxy. From proxy, it passed on to the Endpoint then, from Endpoint, it passed to the WeatherAPI. 
 
 	1. Create new integration studio project called `ScheduledTask`
@@ -992,8 +992,15 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 				<faultSequence/>
 			</resource>
 		```
+	3. Export Project Artifacts and Run
 
+	4. If the java service is not running,
+		```shell		
+			# Go to the resources folder
+			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
+		```
 
+	5. To test it out
 		```shell
 			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
 			--header "Content-Type:application/json" \
@@ -1007,7 +1014,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			[2022-03-10 01:14:37,285]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
 			[2022-03-10 01:14:37,287]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to clemency medical center
 		```
-
+		Result
 		```json
 			{
 				"appointmentNumber": 7,
@@ -1038,6 +1045,113 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 				"status": "Doctor thomas collins is not available in clemency medical center"
 			}
 		```
+
+24. Data Mapper (Project folder: HealthcareProject)
+
+	Transforming incoming request to a specific format that the backend service expects. 
+	The example is transforming the request from
+
+	```json
+		{
+			"name": "Nelson Dias",
+			"dob": "1940-03-19",
+			"ssn": "234-23-525",
+			"address": "Lisbon",
+			"phone": "8770586755",
+			"email": "nelson.dias@wso2.com",
+			"doctor": "thomas collins",
+			"hospital": "grand oak community hospital",
+			"cardNo": "7844481124110331",
+			"appointment_date": "2017-04-02"
+		}
+	```
+	to
+	```json
+		{
+			"patient": {
+				"name": "Nelson Dias",
+				"dob": "1940-03-19",
+				"ssn": "234-23-525",
+				"address": "Lisbon",
+				"phone": "8770586755",
+				"email": "nelson.dias@wso2.com"
+			},
+			"doctor": "thomas collins",
+			"hospital": "grand oak community hospital",
+			"appointment_date": "2025-04-02"
+		}
+	```
+	
+	1. On the /categories/{category}/reserve resource, add `Data Mapper` mediator in between the `SET HOSPITAL` property mediator and Switch mediator. 
+	
+	2. Double click the data mapper mediator and give the configuration name `RequestMapping` then click Finish. It will open up RequestMapping.datamapper_diagram
+	![Data Mapper Ch 24](Resources/screenshots/ch24_data_mapper.png)
+
+	3. Click on Load Input File, set Resource Type to `JSON`, click on file system and find `PatientClient.json` under Resources/Ch_24_Data_Mapper folder
+
+	4. Click on Load Output File, set Resource Type to `JSON`, click on file system and find `PatientExample.json` under Resources/Ch_24_Data_Mapper folder
+
+	5. You can use `AI generated data mappings available` to map the input and output automatically. If you prefer to do it manually, you can drag the field from input and to the field on output.
+	![Mapped field Ch 24](Resources/screenshots/ch24_data_mapped.png)
+
+	6. Once all fields mapped, go tback to the `HealthcareAPI` and change the following Data Mapper's properties
+		1. Input Type: `JSON`
+		2. Output Type: `JSON`
+	
+	7. Export Project Artifacts and Run by checking the `HealthCareProjectConfigs` and `HealthCareProjectRegistryResources` artifacts
+
+	8. If the java service is not running,
+		```shell		
+			# Go to the resources folder
+			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
+		```
+	9. To test,
+		```shell
+			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
+			--header "Content-Type:application/json" \
+			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
+		```
+
+		```log
+			[2022-03-12 01:55:20,963]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+			[2022-03-12 01:55:21,004]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to grand oak community hospital
+		```
+		Result
+		```json
+			{
+				"appointmentNumber": 8,
+				"doctor": {
+					"name": "thomas collins",
+					"hospital": "grand oak community hospital",
+					"category": "surgery",
+					"availability": "9.00 a.m - 11.00 a.m",
+					"fee": 7000.0
+				},
+				"patient": {
+					"name": "Nelson Dias",
+					"dob": "1940-03-19",
+					"ssn": "234-23-525",
+					"address": "Lisbon",
+					"phone": "8770586755",
+					"email": "nelson.dias@wso2.com"
+				},
+				"fee": 7000.0,
+				"confirmed": false
+			}
+		```
+	10. To try another test, change the hospital to `clemency medical center` in `PatientClient.json` then run the curl command again
+
+	```log
+		[2022-03-12 02:00:41,679]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+		[2022-03-12 02:00:41,703]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to clemency medical center
+	```
+	Result
+	```json
+		{
+    		"status": "Doctor thomas collins is not available in clemency medical center"
+		}
+	```
+
 
 
 

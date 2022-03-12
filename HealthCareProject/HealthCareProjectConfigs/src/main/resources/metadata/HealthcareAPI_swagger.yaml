@@ -25,6 +25,8 @@ paths:
       - name: category
         in: path
         required: true
+        style: simple
+        explode: false
         schema:
           type: string
       requestBody:

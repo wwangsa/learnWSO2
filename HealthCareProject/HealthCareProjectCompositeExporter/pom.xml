@@ -14,14 +14,18 @@
   <name>HealthCareProjectCompositeExporter</name>
   <description>HealthCareProjectCompositeExporter</description>
   <properties>
+    <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,synapse/metadata=yaml,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
+    <com.example.resource_._RequestMapping_inputSchema>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping_inputSchema>
+    <com.example.resource_._RequestMapping>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping>
+    <com.example.endpoint_._QueryDoctorEP>capp/EnterpriseServiceBus</com.example.endpoint_._QueryDoctorEP>
+    <com.example.endpoint_._ClemencyEP>capp/EnterpriseServiceBus</com.example.endpoint_._ClemencyEP>
     <com.example.endpoint_._PineValleyEP>capp/EnterpriseServiceBus</com.example.endpoint_._PineValleyEP>
     <com.example.api_._HealthcareAPI>capp/EnterpriseServiceBus</com.example.api_._HealthcareAPI>
-    <com.example.endpoint_._GrandOakEP>capp/EnterpriseServiceBus</com.example.endpoint_._GrandOakEP>
     <com.example.metadata_._HealthcareAPI_swagger>capp/EnterpriseServiceBus</com.example.metadata_._HealthcareAPI_swagger>
-    <com.example.endpoint_._QueryDoctorEP>capp/EnterpriseServiceBus</com.example.endpoint_._QueryDoctorEP>
+    <com.example.resource_._RequestMapping_xsltStyleSheet>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping_xsltStyleSheet>
+    <com.example.endpoint_._GrandOakEP>capp/EnterpriseServiceBus</com.example.endpoint_._GrandOakEP>
+    <com.example.resource_._RequestMapping_outputSchema>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping_outputSchema>
     <com.example.metadata_._HealthcareAPI_metadata>capp/EnterpriseServiceBus</com.example.metadata_._HealthcareAPI_metadata>
-    <artifact.types>jaggery/app=zip,synapse/priority-executor=xml,synapse/inbound-endpoint=xml,service/rule=aar,synapse/message-store=xml,event/stream=json,service/meta=xml,datasource/datasource=xml,synapse/proxy-service=xml,bpel/workflow=zip,synapse/sequence=xml,synapse/endpointTemplate=xml,carbon/application=car,wso2/gadget=dar,synapse/api=xml,synapse/event-source=xml,synapse/message-processors=xml,event/receiver=xml,lib/dataservice/validator=jar,synapse/template=xml,synapse/endpoint=xml,lib/carbon/ui=jar,lib/synapse/mediator=jar,synapse/metadata=yaml,event/publisher=xml,synapse/local-entry=xml,synapse/task=xml,webapp/jaxws=war,registry/resource=zip,synapse/configuration=xml,service/axis2=aar,synapse/lib=zip,synapse/sequenceTemplate=xml,event/execution-plan=siddhiql,service/dataservice=dbs,web/application=war,lib/library/bundle=jar</artifact.types>
-    <com.example.endpoint_._ClemencyEP>capp/EnterpriseServiceBus</com.example.endpoint_._ClemencyEP>
   </properties>
   <dependencies>
     <dependency>
@@ -35,6 +39,18 @@
       <artifactId>GrandOakEP</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping_xsltStyleSheet</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping_outputSchema</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
     </dependency>
     <dependency>
       <groupId>com.example.api</groupId>
@@ -61,10 +77,22 @@
       <type>xml</type>
     </dependency>
     <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
       <groupId>com.example.metadata</groupId>
       <artifactId>HealthcareAPI_swagger</artifactId>
       <version>1.0.0</version>
       <type>yaml</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping_inputSchema</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
     </dependency>
   </dependencies>
   <repositories>
