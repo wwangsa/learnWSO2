@@ -1141,16 +1141,16 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		```
 	10. To try another test, change the hospital to `clemency medical center` in `PatientClient.json` then run the curl command again
 
-	```log
-		[2022-03-12 02:00:41,679]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
-		[2022-03-12 02:00:41,703]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to clemency medical center
-	```
-	Result
-	```json
-		{
-    		"status": "Doctor thomas collins is not available in clemency medical center"
-		}
-	```
+		```log
+			[2022-03-12 02:00:41,679]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+			[2022-03-12 02:00:41,703]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to clemency medical center
+		```
+		Result
+		```json
+			{
+				"status": "Doctor thomas collins is not available in clemency medical center"
+			}
+		```
 
 
 
