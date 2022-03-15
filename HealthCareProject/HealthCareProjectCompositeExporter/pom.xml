@@ -19,6 +19,7 @@
     <com.example.resource_._RequestMapping>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping>
     <com.example.endpoint_._QueryDoctorEP>capp/EnterpriseServiceBus</com.example.endpoint_._QueryDoctorEP>
     <com.example.endpoint_._ClemencyEP>capp/EnterpriseServiceBus</com.example.endpoint_._ClemencyEP>
+    <com.example.template_._HospitalRoutingSQ>capp/EnterpriseServiceBus</com.example.template_._HospitalRoutingSQ>
     <com.example.endpoint_._PineValleyEP>capp/EnterpriseServiceBus</com.example.endpoint_._PineValleyEP>
     <com.example.api_._HealthcareAPI>capp/EnterpriseServiceBus</com.example.api_._HealthcareAPI>
     <com.example.metadata_._HealthcareAPI_swagger>capp/EnterpriseServiceBus</com.example.metadata_._HealthcareAPI_swagger>
@@ -55,6 +56,12 @@
     <dependency>
       <groupId>com.example.api</groupId>
       <artifactId>HealthcareAPI</artifactId>
+      <version>1.0.0</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.template</groupId>
+      <artifactId>HospitalRoutingSQ</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
     </dependency>

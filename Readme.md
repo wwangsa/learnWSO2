@@ -23,7 +23,8 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 * To stop the console run, there is a maximize icon on top right of the console window. When it's click, you will see the stop button
 
 ## References
-* To learn more different types of mediators and what it could do, here is the [link to the v 7.2.0](https://ei.docs.wso2.com/en/7.2.0/micro-integrator/references/mediators/about-mediators/#!) with Micro Integrator.
+* To learn more different types of core mediators and what it could do, here is the [link to the v 7.2.0](https://ei.docs.wso2.com/en/7.2.0/micro-integrator/references/mediators/about-mediators/#!) with Micro Integrator.
+* This [6.4.0 documentation](https://docs.wso2.com/display/EI640/ESB+Mediators) has core mediators' description summarized as a table
 
 ## Section 1: Introduction
 
@@ -923,7 +924,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 	![Big Picture for Ch 23](Resources/screenshots/ch23.png)
 
-	Creating message routing logic that will forward to relevant hospital backend service depends on the content of the payloads.
+	Creating message routing logic that will forward to relevant hospital backend service depends on the content of the json payloads.
 
 	1. Create 3 new endpoints called
 	
@@ -1048,7 +1049,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 24. Data Mapper (Project folder: HealthcareProject)
 
-	Transforming incoming request to a specific format that the backend service expects. 
+	Transforming request message to the format that the reservation system accepted. Data mapper is used to map the fields.
 	The example is transforming the request from
 
 	```json
@@ -1152,7 +1153,62 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			}
 		```
 
+25. Sequence Template (Project folder: HealthcareProject)
+	Allowing a template (the same workflow) which can be used in several mediation flows and can be invoked multiple times. Do not confused with mediation sequences. A mediation sequence is a set of mediators organized into a logical flow, allowing you to implement pipes and filter patterns. The mediators in the sequence will perform the necessary message processing and route the message to the required destination.
 
+	Typically, the required mediation sequences are defined within the proxy service or the REST API. This includes an In sequence, an Out sequence, and a default fault sequence.
+
+	1. Create new template called `HospitalRoutingSQ` with Template Type `Sequence Template`
+	2. Right click on the Template design and add parameter then add log and property mediators
+		```xml
+				<parameter isMandatory="false" name="setHospital"/>
+				<sequence>
+					<log description="LOG HOSPITAL" level="custom">
+						<property expression="fn:concat('Routing to:', $func:setHospital)" name="LOG MESSAGE"/>
+					</log>
+				</sequence>
+		```
+	3. Change the hardcoded hospital name in URI Template to `{uri.var.hospital}` for ClemencyCP, GrandOakEP, and PineValeyEP endpoints.
+	4. Inside the switch mediators, add Call Template mediators between Log and Send mediators for each switch case (except default)
+	5. Once Call Template mediators are added, removed the log mediator because we created earlier in the sequence
+	6. Export Project Artifacts and Run
+
+	7. If the java service is not running,
+		```shell		
+			# Go to the resources folder
+			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
+		```
+
+	8. To test it out
+		```shell
+			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
+			--header "Content-Type:application/json" \
+			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
+
+		```
+		```log
+			[2022-03-15 01:00:15,655]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+			[2022-03-15 01:00:18,708]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to:clemency
+		```
+		Result
+		```json
+			{
+				"status": "Doctor thomas collins is not available in clemency medical center"
+			}
+		```
+
+
+
+
+
+
+Quick go through
+
+26. Call mediator
+If you use the Send mediator to send a message, the response goes to the OutSequence (or to the specified receiving sequence). If you use the Call mediator to send a message, the response goes to the next mediator, which is placed right after the send mediator in the mediation flow.
+
+28. Message Store and Processor
+Message store artifacts are used to temporarily stored incoming messages
 
 
 ## Section 4: Message exit points

@@ -20,4 +20,7 @@
     <artifact name="PineValleyEP" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
         <file>src/main/synapse-config/endpoints/PineValleyEP.xml</file>
     </artifact>
+    <artifact name="HospitalRoutingSQ" groupId="com.example.template" version="1.0.0" type="synapse/sequenceTemplate" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/templates/HospitalRoutingSQ.xml</file>
+    </artifact>
 </artifacts>

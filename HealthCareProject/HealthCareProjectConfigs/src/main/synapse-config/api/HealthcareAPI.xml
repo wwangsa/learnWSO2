@@ -29,25 +29,25 @@
             <datamapper config="gov:datamapper/RequestMapping.dmc" description="Format Message" inputSchema="gov:datamapper/RequestMapping_inputSchema.json" inputType="JSON" outputSchema="gov:datamapper/RequestMapping_outputSchema.json" outputType="JSON" xsltStyleSheet="gov:datamapper/RequestMapping_xsltStyleSheet.xml"/>
             <switch source="$ctx:hospitalProperty">
                 <case regex="grand oak community hospital">
-                    <log description="LOG HOSPITAL" level="custom">
-                        <property expression="fn:concat(&quot;Routing to &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
-                    </log>
+                    <call-template description="HOSPITALROUTINGSQ1" target="HospitalRoutingSQ">
+                        <with-param name="setHospital" value="grandoaks"/>
+                    </call-template>
                     <send>
                         <endpoint key="GrandOakEP"/>
                     </send>
                 </case>
                 <case regex="clemency medical center">
-                    <log description="LOG HOSPITAL" level="custom">
-                        <property expression="fn:concat(&quot;Routing to &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
-                    </log>
+                    <call-template description="HOSPITALROUTINGSQ2" target="HospitalRoutingSQ">
+                        <with-param name="setHospital" value="clemency"/>
+                    </call-template>
                     <send>
                         <endpoint key="ClemencyEP"/>
                     </send>
                 </case>
                 <case regex="pine valley community hospital">
-                    <log description="LOG HOSPITAL" level="custom">
-                        <property expression="fn:concat(&quot;Routing to &quot;, $ctx:hospitalProperty)" name="LOG MESSAGE"/>
-                    </log>
+                    <call-template description="HOSPITALROUTINGSQ3" target="HospitalRoutingSQ">
+                        <with-param name="setHospital" value="pinevalley"/>
+                    </call-template>
                     <send>
                         <endpoint key="PineValleyEP"/>
                     </send>
