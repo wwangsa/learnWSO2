@@ -22,9 +22,11 @@
     <com.example.template_._HospitalRoutingSQ>capp/EnterpriseServiceBus</com.example.template_._HospitalRoutingSQ>
     <com.example.endpoint_._PineValleyEP>capp/EnterpriseServiceBus</com.example.endpoint_._PineValleyEP>
     <com.example.api_._HealthcareAPI>capp/EnterpriseServiceBus</com.example.api_._HealthcareAPI>
+    <com.example.endpoint_._ChannelingEP>capp/EnterpriseServiceBus</com.example.endpoint_._ChannelingEP>
     <com.example.metadata_._HealthcareAPI_swagger>capp/EnterpriseServiceBus</com.example.metadata_._HealthcareAPI_swagger>
     <com.example.resource_._RequestMapping_xsltStyleSheet>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping_xsltStyleSheet>
     <com.example.endpoint_._GrandOakEP>capp/EnterpriseServiceBus</com.example.endpoint_._GrandOakEP>
+    <com.example.endpoint_._SettlePaymentEP>capp/EnterpriseServiceBus</com.example.endpoint_._SettlePaymentEP>
     <com.example.resource_._RequestMapping_outputSchema>capp/EnterpriseServiceBus</com.example.resource_._RequestMapping_outputSchema>
     <com.example.metadata_._HealthcareAPI_metadata>capp/EnterpriseServiceBus</com.example.metadata_._HealthcareAPI_metadata>
   </properties>
@@ -36,6 +38,42 @@
       <type>yaml</type>
     </dependency>
     <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping_outputSchema</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.endpoint</groupId>
+      <artifactId>SettlePaymentEP</artifactId>
+      <version>1.0.0</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.endpoint</groupId>
+      <artifactId>QueryDoctorEP</artifactId>
+      <version>1.0.0</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.metadata</groupId>
+      <artifactId>HealthcareAPI_swagger</artifactId>
+      <version>1.0.0</version>
+      <type>yaml</type>
+    </dependency>
+    <dependency>
+      <groupId>com.example.resource</groupId>
+      <artifactId>RequestMapping_inputSchema</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
       <groupId>com.example.endpoint</groupId>
       <artifactId>GrandOakEP</artifactId>
       <version>1.0.0</version>
@@ -44,12 +82,6 @@
     <dependency>
       <groupId>com.example.resource</groupId>
       <artifactId>RequestMapping_xsltStyleSheet</artifactId>
-      <version>1.0.0</version>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>com.example.resource</groupId>
-      <artifactId>RequestMapping_outputSchema</artifactId>
       <version>1.0.0</version>
       <type>zip</type>
     </dependency>
@@ -67,12 +99,6 @@
     </dependency>
     <dependency>
       <groupId>com.example.endpoint</groupId>
-      <artifactId>QueryDoctorEP</artifactId>
-      <version>1.0.0</version>
-      <type>xml</type>
-    </dependency>
-    <dependency>
-      <groupId>com.example.endpoint</groupId>
       <artifactId>ClemencyEP</artifactId>
       <version>1.0.0</version>
       <type>xml</type>
@@ -84,22 +110,10 @@
       <type>xml</type>
     </dependency>
     <dependency>
-      <groupId>com.example.resource</groupId>
-      <artifactId>RequestMapping</artifactId>
+      <groupId>com.example.endpoint</groupId>
+      <artifactId>ChannelingEP</artifactId>
       <version>1.0.0</version>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>com.example.metadata</groupId>
-      <artifactId>HealthcareAPI_swagger</artifactId>
-      <version>1.0.0</version>
-      <type>yaml</type>
-    </dependency>
-    <dependency>
-      <groupId>com.example.resource</groupId>
-      <artifactId>RequestMapping_inputSchema</artifactId>
-      <version>1.0.0</version>
-      <type>zip</type>
+      <type>xml</type>
     </dependency>
   </dependencies>
   <repositories>

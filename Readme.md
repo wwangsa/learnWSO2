@@ -1199,13 +1199,87 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 
 
+26. Call mediator (Project folder: HealthcareProject)
 
+	![Big Picture for Ch 26](Resources/screenshots/ch26.png)
+	How to use call mediator to expose several services as single services using chaining method.
+	When the Send mediator is used to send a message, the response goes to the OutSequence (or to the specified receiving sequence). When the Call mediator is used to send a message, the response goes to the next mediator, allowing to continue the transform process.
 
+	1. Create new Endpoint called `ChannelingEP` 
+		* Endpoint Type: `HTTP Endpoint`
+		* Method: `GET`
+		* URI Template: `http://localhost:9090/{uri.var.hospital}/categories/appointments/{uri.var.appointmentId}/fee`
 
-Quick go through
+	2. Create new Endpoint called `SettlePaymentEP` 
+		* Endpoint Type: `HTTP Endpoint`
+		* Method: `POST`
+		* URI Template: `http://localhost:9090/healthcare/payments`
+	
+	3. Removed previous send mediators and add call mediators
 
-26. Call mediator
-If you use the Send mediator to send a message, the response goes to the OutSequence (or to the specified receiving sequence). If you use the Call mediator to send a message, the response goes to the next mediator, which is placed right after the send mediator in the mediation flow.
+	4. Add log mediator and 3 properties mediators
+		* GET DOCTOR DETAILS > `json-eval($.doctor)`
+		* GET APPOINTMENT ID > `json-eval($.appointmentNumber)`
+		* GET PATIENT DETAILS > `json-eval($.patient)`
+	
+	5. Add new call mediator to `ChannelingEP`
+
+	6. Add property to get the actual fee > `json-eval($.actualFee)`
+
+	7. Add Payload Factory
+		```xml
+				<payloadFactory description="SET PAYLOAD MESSAGE" media-type="json">
+					<format>{
+						"appointmentNumber": $1,
+						"doctor": $2,
+						"patient": $3,
+						"fee": $4,
+						"confirmed": "false",
+						"cardNumber": "1234567890"
+					}</format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:uri.var.appointmentId"/>
+                    <arg evaluator="xml" expression="$ctx:doctorDetails"/>
+                    <arg evaluator="xml" expression="$ctx:patientDetails"/>
+                    <arg evaluator="xml" expression="$ctx:actualFee"/>
+                </args>
+            </payloadFactory>
+		```
+	
+	8. Add another call mediator to `SettlePaymentEP` then add Respond mediator at the end
+
+	9. Export Project Artifacts and Run
+	
+	10. If the java service is not running,
+		```shell		
+			# Go to the resources folder
+			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
+		```
+	11. To test it out
+		```shell
+			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
+			--header "Content-Type:application/json" \
+			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
+
+		```
+		```log
+			[2022-03-20 01:22:22,524]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to:grandoaks
+			[2022-03-20 01:22:22,551]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = {"appointmentNumber":9,"doctor":{"name":"thomas collins","hospital":"grand oak community hospital","category":"surgery","availability":"9.00 a.m - 11.00 a.m","fee":7000.0},"patient":{"name":"Nelson Dias","dob":"1940-03-19","ssn":"234-23-525","address":"Lisbon","phone":"8770586755","email":"nelson.dias@wso2.com"},"fee":7000.0,"confirmed":false}
+			[2022-03-20 01:22:22,598]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = {"patientName":"nelson dias","doctorName":"thomas collins","actualFee":"7000.0"}
+		```
+		
+		Result
+		```json
+		{
+			"patient": "Nelson Dias",
+			"actualFee": 7000.0,
+			"discount": 20,
+			"discounted": 5600.0,
+			"paymentID": "5ce473f6-7b1a-4d81-a196-390516cb8a8c",
+			"status": "Settled"
+		}
+		```
+
 
 28. Message Store and Processor
 Message store artifacts are used to temporarily stored incoming messages

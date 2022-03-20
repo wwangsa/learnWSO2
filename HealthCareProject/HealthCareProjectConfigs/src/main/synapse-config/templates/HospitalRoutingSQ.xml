@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template name="HospitalRoutingSQ" xmlns="http://ws.apache.org/ns/synapse">
-    <parameter isMandatory="false" name="setHospital"/>
+    <parameter defaultValue="" isMandatory="false" name="setHospital"/>
     <sequence>
         <log description="LOG HOSPITAL" level="custom">
             <property expression="fn:concat('Routing to:', $func:setHospital)" name="LOG MESSAGE"/>
