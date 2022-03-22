@@ -1280,9 +1280,20 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		}
 		```
 
+27. Install RabbitMQ
+	Using RabbitMQ as middleware. Leverage Docker instead of installing in computer. Default cred is guest/guest
+	
+	```shell
+		docker pull rabbitmq:3-management
+		# Replace the brackets
+		docker run -d --hostname my-rabbit --name wso2-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+		
+	```
+	To test it out, go to browser and go to http://localhost:15672. If login is an issue, use private browsing.
+	![Big Picture for Ch 27](Resources/screenshots/ch27.png)
 
 28. Message Store and Processor
-Message store artifacts are used to temporarily stored incoming messages
+	Message store artifacts are used to temporarily stored incoming messages
 
 
 ## Section 4: Message exit points
