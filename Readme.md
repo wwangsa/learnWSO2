@@ -909,7 +909,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 			<faultSequence/>
 		</resource>
 		```
-	5. Export Project Artifacts and Run
+	5. Export Project Artifacts and Run (check all if haven't)
 		```shell
 			curl -v GET "http://localhost:8290/healthcare/querydoctor/surgery"
 
@@ -993,7 +993,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 				<faultSequence/>
 			</resource>
 		```
-	3. Export Project Artifacts and Run
+	3. Export Project Artifacts and Run (check all if haven't)
 
 	4. If the java service is not running,
 		```shell		
@@ -1171,7 +1171,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	3. Change the hardcoded hospital name in URI Template to `{uri.var.hospital}` for ClemencyCP, GrandOakEP, and PineValeyEP endpoints.
 	4. Inside the switch mediators, add Call Template mediators between Log and Send mediators for each switch case (except default)
 	5. Once Call Template mediators are added, removed the log mediator because we created earlier in the sequence
-	6. Export Project Artifacts and Run
+	6. Export Project Artifacts and Run (check all if haven't)
 
 	7. If the java service is not running,
 		```shell		
@@ -1248,7 +1248,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	
 	8. Add another call mediator to `SettlePaymentEP` then add Respond mediator at the end
 
-	9. Export Project Artifacts and Run
+	9. Export Project Artifacts and Run (check all if haven't)
 	
 	10. If the java service is not running,
 		```shell		
@@ -1292,8 +1292,159 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	To test it out, go to browser and go to http://localhost:15672. If login is an issue, use private browsing.
 	![Big Picture for Ch 27](Resources/screenshots/ch27.png)
 
-28. Message Store and Processor
-	Message store artifacts are used to temporarily stored incoming messages
+28. Message Store and Processor (Project folder: HealthcareProject)
+	Message store artifacts are used to temporarily stored incoming messages before they are delivered to the destination. It's useful for serving traffics that can only accept messages at a give rate.
+	![Big Picture for Ch 28](Resources/screenshots/ch28.png)
+	1. Create new message-stores with the following configs:
+		* Message Store Name: `PaymentRequestMS`
+		* Message Store type: `RabbitMQ Message Store`
+		* RabbitMQ Server Host Name: `localhost`
+		* RabbitMQ Server Host Port: `5672`
+		* SSL Enabled: `false`
+		* RabbitMQ Queue Name: `myQueue`
+		* RabbitMQ Exchange Name: `myExchange`
+		* Routing Key: `myKey`
+		* User Name: `guest`
+		* Password: `guest`
+
+	2. Create sequences artifact called `PaymentRequestProcessingSeq` and add logs, call, defined endpoints and drop mediators. Drop mediator is used to exit the API immediately without continuing the flow (end of message flow).
+		```xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<sequence name="PaymentRequestProcessingSeq" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+			<log description="LOG START" level="custom">
+				<property name="LOG MESSAGE" value="LOG BEFORE SETTLE PAYMENT EP CALL"/>
+			</log>
+			<call>
+				<endpoint key="SettlePaymentEP"/>
+			</call>
+			<log description="LOG END" level="custom">
+				<property name="LOG MESSAGE" value="LOG AFTER SETTLE PAYMENT EP CALL"/>
+				<property expression="json-eval($)" name="LOG APPOINTMENT"/>
+			</log>
+			<drop/>
+		</sequence>
+		```
+	3. Create Message Processor artifact with the following configs:
+	It's responsible to execute the sequence we created above
+		* Message processor type: `Message Sampling Processor`
+		* Message processor Name: `PaymentRequestMP`
+		* Message Store: `PaymentRequestMS`
+		* Processor state: `Activate`
+		* Sequence: `PaymentRequestProcessingSeq`
+		* Sampling interval (Millis): `1000`
+		* Sampling concurrency: 1
+
+	4. Go back to the HealthcareAPI remove the Call SettlementEP
+		```xml
+			<call>
+                <endpoint key="SettlePaymentEP"/>
+            </call>
+		```
+		and replace with Store and Payload Factory mediators
+		```xml
+			<store description="PUBLISH TO QUEUE" messageStore="PaymentRequestMS"/>
+            <payloadFactory description="SET RESPONSE PAYLOAD" media-type="json">
+                <format>
+				{
+					"message": "Payment Request published to myQueue. Confirmation will be sent via Email"
+				}
+				</format>
+                <args/>
+            </payloadFactory>
+		```
+	5. Go to RabbitMQ Dashboard page (http://localhost:15672) 
+		1. Go to Queues tab and click on "Add queue" and put the name `myQueue` then click "Add queue".
+		2. Go to Exchanges tab and click on "Add a new exchange" then put the name `myExchange` then click "Add exchange"
+		3. Click on `myExchange` that were created above and click on bindings with the following:
+		* On To queue: `myQueue`
+		* Routing Key: `myKey`
+		* Click on Bind
+	
+	6. Go back to WSO2 HealthcareAPI and click on "Server configuration (Embedded Micro Integrator)" {The 6th icon from the left shortcut bar on the top} and modify the embedded `deployment.toml` file by going to line 60 (it could be different) from
+		```toml
+		# [transport.rabbitmq]
+		# sender_enable = true
+		# listener_enable = true
+
+		# [[transport.rabbitmq.sender]]
+		# name = "AMQPConnectionFactory"
+		# parameter.hostname = "localhost"
+		# parameter.port = 5672
+		# parameter.username = "guest"
+		# parameter.password = "guest"
+
+		# [[transport.rabbitmq.listener]]
+		# name = "AMQPConnectionFactory"
+		# parameter.hostname = "localhost"
+		# parameter.port = 5672
+		# parameter.username = "guest"
+		# parameter.password = "guest"
+		```
+		to
+		```toml
+			[transport.rabbitmq]
+			sender_enable = true
+			# listener_enable = true
+
+			[[transport.rabbitmq.sender]]
+			name = "CachedRabbitMQConnectionFactory"
+			parameter.hostname = "localhost"
+			parameter.port = 5672
+			parameter.username = "guest"
+			parameter.password = "guest"
+
+			[[transport.rabbitmq.listener]]
+			name = "AMQPConnectionFactory"
+			parameter.hostname = "localhost"
+			parameter.port = 5672
+			parameter.username = "guest"
+			parameter.password = "guest"
+		```
+
+	7. Export Project Artifacts and Run (check all if haven't)
+	
+	8. If the java service is not running,
+		```shell		
+			# Go to the resources folder
+			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
+		```
+	9. To test it out
+		```shell
+			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
+			--header "Content-Type:application/json" \
+			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
+
+		```
+		```log
+			[2022-03-23 00:46:11,106]  INFO {PassThroughListeningIOReactorManager} - Pass-through HTTP Listener started on 0.0.0.0:8290
+			[2022-03-23 00:46:11,115]  INFO {PassThroughListeningIOReactorManager} - Pass-through HTTPS Listener started on 0.0.0.0:8253
+			[2022-03-23 00:46:11,116]  INFO {RabbitMQListener} - RABBITMQ listener started
+			[2022-03-23 00:46:11,119]  INFO {StartupFinalizer} - WSO2 Micro Integrator started in 25.00 seconds
+			[2022-03-23 00:46:11,588]  INFO {PassThroughListeningIOReactorManager} - Pass-through EI_INTERNAL_HTTP_INBOUND_ENDPOINT Listener started on 0.0.0.0:9201
+			[2022-03-23 00:46:11,750]  INFO {PassThroughListeningIOReactorManager} - Pass-through EI_INTERNAL_HTTPS_INBOUND_ENDPOINT Listener started on 0.0.0.0:9164
+			[2022-03-23 00:46:12,021]  INFO {AbstractQuartzTaskManager} - Task scheduled: [ESB_TASK][MSMP_PaymentRequestMP_0].
+			[2022-03-23 00:46:12,022]  INFO {ScheduledMessageProcessor} - Started message processor. [PaymentRequestMP].
+			[2022-03-23 00:46:12,248]  INFO {RabbitMQStore} - Store [PaymentRequestMS] Successfully connected to RabbitMQ Broker
+			[2022-03-23 00:46:15,572]  INFO {AuthenticationHandlerAdapter} - User admin logged in successfully
+			[2022-03-23 00:46:15,592]  INFO {ServiceComponent} - Initializing Security parameters
+			[2022-03-23 00:47:22,449]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = "LOG RESERVATION START"
+			[2022-03-23 00:47:24,862]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = Routing to:grandoaks
+			[2022-03-23 00:47:24,925]  INFO {TimeoutHandler} - This engine will expire all callbacks after GLOBAL_TIMEOUT: 120 seconds, irrespective of the timeout action, after the specified or optional timeout
+			[2022-03-23 00:47:25,182]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = {"appointmentNumber":11,"doctor":{"name":"thomas collins","hospital":"grand oak community hospital","category":"surgery","availability":"9.00 a.m - 11.00 a.m","fee":7000.0},"patient":{"name":"Nelson Dias","dob":"1940-03-19","ssn":"234-23-525","address":"Lisbon","phone":"8770586755","email":"nelson.dias@wso2.com"},"fee":7000.0,"confirmed":false}
+			[2022-03-23 00:47:25,228]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = {"patientName":"nelson dias","doctorName":"thomas collins","actualFee":"7000.0"}
+			[2022-03-23 00:47:26,039]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = LOG BEFORE SETTLE PAYMENT EP CALL
+			[2022-03-23 00:47:26,074]  INFO {LogMediator} - {api:HealthcareAPI} LOG MESSAGE = LOG AFTER SETTLE PAYMENT EP CALL, LOG APPOINTMENT = {"patient":"Nelson Dias","actualFee":7000.0,"discount":20,"discounted":5600.0,"paymentID":"9bb72945-29ac-4274-97f7-93d631b68c18","status":"Settled"}
+		```
+		
+		Result
+		```json
+		{
+			"message": "Payment Request published to myQueue. Confirmation will be sent via Email"
+		}
+		```
+		![RabbitMQ result](Resources/screenshots/ch28-rabbitmq.png)
+
+
 
 
 ## Section 4: Message exit points

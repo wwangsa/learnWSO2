@@ -88,9 +88,13 @@
                     <arg evaluator="xml" expression="$ctx:actualFee"/>
                 </args>
             </payloadFactory>
-            <call>
-                <endpoint key="SettlePaymentEP"/>
-            </call>
+            <store description="PUBLISH TO QUEUE" messageStore="PaymentRequestMS"/>
+            <payloadFactory description="SET RESPONSE PAYLOAD" media-type="json">
+                <format>{
+	"message": "Payment Request published to myQueue. Confirmation will be sent via Email"
+}</format>
+                <args/>
+            </payloadFactory>
             <respond description="SEND OUT RESPONSE"/>
         </inSequence>
         <outSequence>

@@ -29,4 +29,13 @@
     <artifact name="SettlePaymentEP" groupId="com.example.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
         <file>src/main/synapse-config/endpoints/SettlePaymentEP.xml</file>
     </artifact>
+    <artifact name="PaymentRequestMS" groupId="com.example.message-store" version="1.0.0" type="synapse/message-store" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/message-stores/PaymentRequestMS.xml</file>
+    </artifact>
+    <artifact name="PaymentRequestProcessingSeq" groupId="com.example.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/PaymentRequestProcessingSeq.xml</file>
+    </artifact>
+    <artifact name="PaymentRequestMP" groupId="com.example.message-processors" version="1.0.0" type="synapse/message-processors" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/message-processors/PaymentRequestMP.xml</file>
+    </artifact>
 </artifacts>
