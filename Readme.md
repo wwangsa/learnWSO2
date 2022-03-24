@@ -1293,8 +1293,9 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	![Big Picture for Ch 27](Resources/screenshots/ch27.png)
 
 28. Message Store and Processor (Project folder: HealthcareProject)
-	Message store artifacts are used to temporarily stored incoming messages before they are delivered to the destination. It's useful for serving traffics that can only accept messages at a give rate.
+	Still related to the HealthcareProject, besides calling the `POST /healthcare/payments`, it submitting to RabbitMQ server to process the payment which would not happen instantly. "A Message Store is used by a mediation sequence to temporarily store messages before they are delivered to their destination. This approach is useful for serving traffic to back-end services that can only accept messages at a given rate, whereas incoming traffic arrives at different rates.The Store Mediator in a mediation sequence is used to store incoming messages in the message store. The Message Processor retrieves the messages from the message store and delivers them to the back-end service at a given rate."
 	![Big Picture for Ch 28](Resources/screenshots/ch28.png)
+
 	1. Create new message-stores with the following configs:
 		* Message Store Name: `PaymentRequestMS`
 		* Message Store type: `RabbitMQ Message Store`
@@ -1325,7 +1326,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		</sequence>
 		```
 	3. Create Message Processor artifact with the following configs:
-	It's responsible to execute the sequence we created above
+		It's responsible to execute the sequence we created above
 		* Message processor type: `Message Sampling Processor`
 		* Message processor Name: `PaymentRequestMP`
 		* Message Store: `PaymentRequestMS`
