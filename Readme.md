@@ -10,7 +10,7 @@ Github: https://github.com/nelsonandredias/wso2_course
 ## Deploying code
 
 To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
-```shell
+```bash
 	cd ~/IntegrationStudio/8.0.0/workspace
 	git clone https://github.com/wwangsa/learnWSO2.git
 ```
@@ -38,7 +38,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 
 	Call GET greetings/{name}
-	```shell
+	```bash
 		curl -v GET "http://localhost:8290/greetings/Nelson" -w "\n"
 	```
 	
@@ -55,7 +55,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 ## Section 2: Message entry points
 
 12. Intro
-	```shell
+	```bash
 		curl -v GET "http://localhost:8290/" -w "\n"
 	```
 	When no resource specified, the curl will return 404 while the log mediator will report "main sequence executed for call to non-existent". This message comes can be customizedfrom
@@ -73,7 +73,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 	Using Log mediator to generate log message.
 
-	```shell
+	```bash
 		# GET orders
 		curl -v GET "http://localhost:8290/orders" -w "\n"
 	```
@@ -97,7 +97,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	5. Respond mediator is used to send back the result back to the client
 
 	Call `GET orders/month/{currentMonth}`
-	```shell
+	```bash
 		#Before adding the query strings in the log message
 		curl -v GET "http://localhost:8290/orders/month/January" -w "\n"
 	```
@@ -108,7 +108,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		}
 	```
 	Call `GET orders/month/{currentMonth}?*`
-	```shell
+	```bash
 		#After adding the query strings in the log message
 		curl -v GET "http://localhost:8290/orders/month/January?minday=1&maxday=20" -w "\n"
 	```
@@ -134,7 +134,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	Be careful when constructing JSON. Missing double quote will compiled ok but would not show result
 
 	Call `GET orders/list`
-	```shell
+	```bash
 		#After adding the query strings in the log message
 		curl -v GET "http://localhost:8290/orders/list" -w "\n"
 	```
@@ -169,7 +169,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 	Below is to test manually using curl
 	Call `GET api/pets`
-	```shell
+	```bash
 		#After adding the query strings in the log message
 		curl -v GET "http://localhost:8290/api/pets" -w "\n"
 	```
@@ -196,7 +196,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	```
 
 	Call `GET api/pets/{name}`
-	```shell
+	```bash
 		#After adding the query strings in the log message
 		curl -v GET "http://localhost:8290/api/pets/Kuky" -w "\n"
 	```
@@ -219,7 +219,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	The instructor use a SOAP service for the Proxy services example. The proxy services used to perform transformation and introduce functionality without changing the existing service. He provided 2 files:
 	1. Java based SOAP service. The webservice can be accessed at http://localhost:9000/services/SimpleStockQuoteService
 
-	```shell
+	```bash
 		#Prerequisites. The instructor uses Java 1.8 or Java 8 (OpenJDK). It would not work with 11 or higher. Run the following to install java 8.
 		sudo apt install openjdk-8-jdk
 		#create symbolic link so we can execute it by calling java8
@@ -237,14 +237,14 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 		b. Using Curl
 		* Using xml file as data reference. Due to relative path, make sure to run it on the workspace folder.
-		```shell
+		```bash
 			curl --location --request POST 'http://localhost:9000/services/SimpleStockQuoteService' \
 			--header 'Content-Type: text/xml; charset=utf-8' \
 			--header 'SOAPAction: urn:getQuote' \
 			--data @Resources/Ch_17_Proxy_Services/requestBody.xml
 		```
 		* Without using xml file
-		```shell
+		```bash
 			curl --location --request POST 'http://localhost:9000/services/SimpleStockQuoteService' \
 			--header 'Content-Type: text/xml; charset=utf-8' \
 			--header 'SOAPAction: urn:getQuote' \
@@ -291,7 +291,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		* ProxyServiceConfigs
 
 	7. Make sure the stockquote_service.jar is running
-		```shell
+		```bash
 			#To run the web services, execute this with java 8.   
 			java8 -jar Resources/Chapter_17_Proxy_Services/stockquote_service.jar
 		```
@@ -451,7 +451,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	6. Open terminal window to test out
 		
 		a. Calling  `DictionaryAPI` REST API project
-		```shell
+		```bash
 			curl -v GET "http://localhost:8290/api/dictionary/Portugal"
 		```
 		Response
@@ -466,7 +466,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		```
 		
 		b. Calling `ExposeRestApiIEP` Inbound endpoint - through dispatch filter pattern exposing the API via http endpoint.Since we're using dispatch filter pattern, the sequence is being ignored.
-		```shell
+		```bash
 			curl -v GET "http://localhost:8285/api/dictionary/wso2" -w "\n"
 		```
 		Response
@@ -481,7 +481,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		```
 
 		c. Calling `HttpTestIEP` Inbound endpoint - Since there is no dispatch filter, the sequencesIN is used
-		```shell
+		```bash
 			curl -v GET "http://localhost:8295" -w "\n"
 		```
 		Response
@@ -506,7 +506,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 	1. Create folders structures for this project
 	
-	```shell
+	```bash
 		mkdir -p /tmp/WSO2/Ch19/CSV/{In,Original,Out}
 		mkdir -p /tmp/WSO2/Ch19/JSON/{In,Original,Out}
 		mkdir -p /tmp/WSO2/Ch19/XML/{In,Original,Out}
@@ -872,7 +872,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	1. Create New Integration Project called `HealthcareProject` with the following modules: ESB Configs, Composite Exporter, Registry Resources, Connector Exporter.
 
 	2. Start the web services provided for this chapter. We can use java decompiler app to view the `Hospital-Service-JDK11-2.0.0.jar` code that run these backend services. The instructor uses [JD-GUI app](https://github.com/java-decompiler/jd-gui).
-		```shell		
+		```bash		
 		# Go to the resources folder
 		java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
 		# To test out, run this in another terminal
@@ -910,7 +910,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		</resource>
 		```
 	5. Export Project Artifacts and Run (check all if haven't)
-		```shell
+		```bash
 			curl -v GET "http://localhost:8290/healthcare/querydoctor/surgery"
 
 			#WSO2 Logs
@@ -996,13 +996,13 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	3. Export Project Artifacts and Run (check all if haven't)
 
 	4. If the java service is not running,
-		```shell		
+		```bash		
 			# Go to the resources folder
 			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
 		```
 
 	5. To test it out
-		```shell
+		```bash
 			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
 			--header "Content-Type:application/json" \
 			--data @Resources/Ch_23_Switch_Mediator/PatientExample.json -w "\n"
@@ -1102,12 +1102,12 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	7. Export Project Artifacts and Run by checking the `HealthCareProjectConfigs` and `HealthCareProjectRegistryResources` artifacts
 
 	8. If the java service is not running,
-		```shell		
+		```bash		
 			# Go to the resources folder
 			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
 		```
 	9. To test,
-		```shell
+		```bash
 			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
 			--header "Content-Type:application/json" \
 			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
@@ -1174,13 +1174,13 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	6. Export Project Artifacts and Run (check all if haven't)
 
 	7. If the java service is not running,
-		```shell		
+		```bash		
 			# Go to the resources folder
 			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
 		```
 
 	8. To test it out
-		```shell
+		```bash
 			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
 			--header "Content-Type:application/json" \
 			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
@@ -1251,12 +1251,12 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	9. Export Project Artifacts and Run (check all if haven't)
 	
 	10. If the java service is not running,
-		```shell		
+		```bash		
 			# Go to the resources folder
 			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
 		```
 	11. To test it out
-		```shell
+		```bash
 			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
 			--header "Content-Type:application/json" \
 			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
@@ -1283,7 +1283,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 27. Install RabbitMQ
 	Using RabbitMQ as middleware. Leverage Docker instead of installing in computer. Default cred is guest/guest
 	
-	```shell
+	```bash
 		docker pull rabbitmq:3-management
 		# Replace the brackets
 		docker run -d --hostname my-rabbit --name wso2-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
@@ -1405,12 +1405,12 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	7. Export Project Artifacts and Run (check all if haven't)
 	
 	8. If the java service is not running,
-		```shell		
+		```bash		
 			# Go to the resources folder
 			java8 -jar Resources/Ch_22_Send_Mediator/Hospital-Service-JDK11-2.0.0.jar
 		```
 	9. To test it out
-		```shell
+		```bash
 			curl -v POST "http://localhost:8290/healthcare/categories/surgery/reserve" \
 			--header "Content-Type:application/json" \
 			--data @Resources/Ch_24_Data_Mapper/PatientClient.json -w "\n"
@@ -1444,6 +1444,115 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		}
 		```
 		![RabbitMQ result](Resources/screenshots/ch28-rabbitmq.png)
+
+
+29. Aggregate Mediator (Project folder: AggregateMediator)
+Combining messages as a whole that are saved into state filter using Aggregate Mediator
+
+	1. Create 3 APIs
+		
+		* Name: `Station1API`, Context: `/station1`. In the InSequence, add the following
+		```xml
+			<log description="LOG START" level="custom">
+                <property name="LOG MESSAGE" value="STATION 1 LOG START"/>
+            </log>
+            <payloadFactory description="SET PAYLOAD" media-type="json">
+                <format>{
+					"station":{
+						"short_name": "St1",
+						"name": "Station 1",
+						"no_of_launches": 100
+					}
+				}</format>
+						<args/>
+			</payloadFactory>
+				<respond description="SEND OUT RESPONSE"/>
+		```
+
+		* Create the last 2 APIs similar to above but change the number
+	
+	2. Create 3 endpoints for the 3 APIs above respectively
+
+		* Endpoint Name: `Station1EP`, Endpoint Type: `HTTP Endpoint`, URI Template: `http://localhost:8290/station1`
+		* Endpoint Name: `Station2EP`, Endpoint Type: `HTTP Endpoint`, URI Template: `http://localhost:8290/station2`
+		* Endpoint Name: `Station3EP`, Endpoint Type: `HTTP Endpoint`, URI Template: `http://localhost:8290/station3`
+	
+	3. Create another API that is responsible to combine the messages into a single message
+
+		Name: `StationAPI`, Context: `/station`
+		
+		InSequence:
+		* add typical log start message 
+		* add clone mediator by right clicking then choose `Add/Remove Target` then enter `3`. It is used clone the same messages. 
+		* Once branched out, add defined endpoints to each clone cell. 
+		* assigned the clone ID `aggregate1` 
+		* Change all the clone target properties with Sequence Type: `NONE` and Endpoint Type: `ANONYMOUS`. This means no further mediation will be performed for the cloned messages and they will send back to endpoint. Not sure why, The anonymous value will help dump the value to the log
+		
+		OutSequence:
+		* Add property mediator called `SET AGGREGATED RESPONSE` with property name `Aggregated_Responses` and set Property Data Type: `OM`. The data type converts XML to OM.
+		* Add aggregate mediator and set
+			* Aggregate ID to `aggregate1` 
+			* Enclosing Element Property to `Aggregated_Responses`
+			* Click on Correlation Expression, change it to Expression and type `json-eval($)`
+			* Click on Aggregate Expression, change it to Expression and type `json-eval($.station.name)`
+		* Add Log inside the agggregate mediator and set
+			* Log Level: Full
+			* Add new element -> Property Name: `AGGREGATED STATIONS ======>`, Property Value Type: `Expression`, change it to Expression and type `$ctx:Aggregated_Responses`
+		* Add Respond called `Send Out Response`
+
+		The InSequence and OutSequence codes
+		```xml
+			<inSequence>
+				<log description="LOG START" level="custom">
+					<property name="LOG MESSAGE" value="STATION MAIN LOG START"/>
+				</log>
+				<clone id="aggregate1">
+					<target>
+                    <endpoint key="Station1EP"/>
+                </target>
+                <target>
+                    <endpoint key="Station2EP"/>
+                </target>
+                <target>
+                    <endpoint key="Station3EP"/>
+                </target>
+				</clone>
+			</inSequence>
+			<outSequence>
+				<property description="SET AGGREGATED RESPONSE" name="Aggregated_Responses" scope="default">
+					<value xmlns=""/>
+				</property>
+				<aggregate id="aggregate1">
+					<correlateOn expression="json-eval($)"/>
+					<completeCondition>
+						<messageCount max="-1" min="-1"/>
+					</completeCondition>
+					<onComplete aggregateElementType="root" enclosingElementProperty="Aggregated_Responses" expression="json-eval($.station.name)">
+						<log description="LOG AGGREGATE" level="full">
+							<property expression="$ctx:Aggregated_Responses" name="AGGREGATED STATIONS =======>"/>
+						</log>
+						<respond description="SEND OUT RESPONSE"/>
+					</onComplete>
+				</aggregate>
+			</outSequence>
+		```
+	4. Export Project Artifacts and Run
+
+	5. Before, we were using CURL to trigger the API. We can use the embedded http client of WSO2 to do the same thing by going to "HTTP Client" tab in next to "Console" tab. If it doesn't show up, go to Window menu > Show View > Other and search for "HTTP Client"
+
+		* On the GET box, type: `http://localhost:8290/station` and click on green play button
+	
+	```log
+		[2022-04-11 01:10:14,224]  INFO {LogMediator} - {api:Station2API} LOG MESSAGE = STATION 2 LOG START
+		[2022-04-11 01:10:14,224]  INFO {LogMediator} - {api:Station1API} LOG MESSAGE = STATION 1 LOG START
+		[2022-04-11 01:10:14,229]  INFO {LogMediator} - {api:Station3API} LOG MESSAGE = STATION 3 LOG START
+		[2022-04-11 01:10:14,342]  INFO {LogMediator} - {api:StationAPI} To: http://www.w3.org/2005/08/addressing/anonymous, WSAction: , SOAPAction: , MessageID: urn:uuid:eddd8fb1-32ea-4a7a-bb84-481517e5ecec, correlation_id: a056e21d-e7e3-48e0-ad50-91221d8430fb_e7386574-233d-4a11-bda0-052807f703f9_1d23d99d-6589-4e79-8d51-a675123c4ab9, Direction: response, AGGREGATED STATIONS =======> = <value/>, Payload: {"value":["Station 1","Station 3","Station 2"]}
+
+
+	```
+	
+
+
 
 
 

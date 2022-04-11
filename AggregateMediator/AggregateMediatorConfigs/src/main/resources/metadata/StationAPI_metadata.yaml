@@ -1,0 +1,10 @@
+---
+key: "StationAPI-1.0.0"
+name : "StationAPI"
+displayName : "StationAPI"
+description: "Sample API"
+version: "1.0.0"
+serviceUrl: "https://{MI_HOST}:{MI_PORT}/station"
+definitionType: "OAS3"
+securityType: "BASIC"
+mutualSSLEnabled: false
