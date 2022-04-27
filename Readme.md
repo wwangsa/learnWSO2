@@ -1448,6 +1448,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 
 29. Aggregate Mediator (Project folder: AggregateMediator)
 Combining messages as a whole that are saved into state filter using Aggregate Mediator
+![Big Picture for Ch 29](Resources/screenshots/ch29.png)
 
 	1. Create 3 APIs
 		
