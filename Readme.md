@@ -21,6 +21,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 	* Data service server: WSO2 EI DSS {version}
 * When dragging and drop mediators, sometimes the mediators keep dragging the previous mediator. This is the IDE bug. You have to click the new mediator until it got highlighted (may have to click multiple times), then you drag it.
 * To stop the console run, there is a maximize icon on top right of the console window. When it's click, you will see the stop button
+* On WSO2 integration studio, to deselect project on Project Explorer, use ctrl+shift+click on the folder that is currently selected. If a folder is selected in the Project Explorer window, it will create new integration project underneath that folder.
 
 ## References
 * To learn more different types of core mediators and what it could do, here is the [link to the v 7.2.0](https://ei.docs.wso2.com/en/7.2.0/micro-integrator/references/mediators/about-mediators/#!) with Micro Integrator.
@@ -1221,11 +1222,7 @@ To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
 		* GET DOCTOR DETAILS > `json-eval($.doctor)`
 		* GET APPOINTMENT ID > `json-eval($.appointmentNumber)`
 		* GET PATIENT DETAILS > `json-eval($.patient)`
-	
-	5. Add new call mediator to `ChannelingEP`
-
-	6. Add property to get the actual fee > `json-eval($.actualFee)`
-
+	DETAIL
 	7. Add Payload Factory
 		```xml
 				<payloadFactory description="SET PAYLOAD MESSAGE" media-type="json">
@@ -1553,13 +1550,66 @@ Combining messages as a whole that are saved into state filter using Aggregate M
 	```
 	
 
+30. Fault Mediator (Project folder: ErrorHandling)
+This is error handling in WSO2 that typically happens at the endpoint that resulted in timeout.
+	
+	1. Create new integration project called `ErrorHandling`
+	2. Create new REST API Project called `GenderAPI` with context `/gender` and add 2 logs on the `Then` and `Else` sections
+		
+		* Add new filter mediator with Regular Expression set to `Male` and Source to `$trp:GenderId`. This filter acts like if statement and it uses to filter messages based on jsonpath, xpath or regular expression. $trp is used to read transport headers
+
+	3. Create new sequence called `processingMaleSeq` that will executed when the transport header is male. This sequence is created to generate error explicitly by calling undefined endpoint
+		* Create send mediator
+		* Add NamedEndPoint to `unexistentMaleEP`
+	
+	4. Add the `processingMaleSeq` to the `GenderAPI`'s filter on the `Then` section.
+
+	5. On the `Else` section of the filter, add send mediator and a NamedEndpoint to `unexistentFemaleEP`  to generate runtime error
+
+	6. Add another sequence to log all error messages and called it `logErrorHandlerSeq`
+		```xml
+		<sequence name="logErrorHandlerSeq" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+			<log description="LOG FULL ERROR" level="custom">
+				<property name="text" value="An unexpected error occured"/>
+				<property expression="get-property('ERROR_MESSAGE')" name="message"/>
+				<property expression="get-property('ERROR_CODE')" name="code"/>
+				<property expression="get-property('ERROR_DETAIL')" name="detail"/>
+				<property expression="get-property('ERROR_EXCEPTION')" name="exception"/>
+			</log>
+		</sequence>
+		```
+	
+	7. Create another sequence called `faultSeq`
+		* Add `logErrorHandlerSeq` that was created above
+		* Add PayloadFactory called `SET ERROR PAYLOAD` and set mediate type to `json` with payload
+			```json
+			{
+				"error":{
+					"message":$1,
+					"detail": $2,
+					"exception" :$3
+				}
+			}
+			```
+			Under Args, add 3 arguments with the following expressions
+			
+			+ get-property('ERROR_MESSAGE')
+			+ get-property('ERROR_DETAIL')
+			+ get-property('ERROR_EXCEPTION')
+		* Add property to customize the axis2 engine configuration called `SET HTTP STATUS CODE BAD REQUEST`
+			
+			+ Property Scope: `axis2`
+			+ Property Name: `HTTP_SC`
+			+ Value: `404`
+		
+		* Add respond mediator to send the message to the client
 
 
 
 
 
 ## Section 4: Message exit points
-
+https://store.wso2.com/store/assets/esbconnector/list
 
 ## Section 5: Data Services
 
