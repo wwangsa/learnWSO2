@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api context="/gender" name="GenderAPI" xmlns="http://ws.apache.org/ns/synapse">
-    <resource methods="GET">
+    <resource faultSequence="faultSeq" methods="GET">
         <inSequence>
             <log description="LOG START" level="custom">
                 <property expression="$trp:GenderId" name="GENDER IS =====>"/>
@@ -21,6 +21,5 @@
             </filter>
         </inSequence>
         <outSequence/>
-        <faultSequence/>
     </resource>
 </api>

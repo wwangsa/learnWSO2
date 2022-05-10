@@ -15,6 +15,6 @@
             <arg evaluator="xml" expression="get-property('ERROR_EXCEPTION')"/>
         </args>
     </payloadFactory>
-    <property description="SET HTTP STATUS CODE BAD REQUEST" name="HTTP_SC" scope="axis2" type="STRING" value=""/>
+    <property description="SET HTTP STATUS CODE BAD REQUEST" name="HTTP_SC" scope="axis2" type="STRING" value="404"/>
     <respond description="SEND ERROR MESSAGE"/>
 </sequence>

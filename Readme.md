@@ -1500,45 +1500,45 @@ Combining messages as a whole that are saved into state filter using Aggregate M
 
 		The InSequence and OutSequence codes
 		```xml
-			<inSequence>
-				<log description="LOG START" level="custom">
-					<property name="LOG MESSAGE" value="STATION MAIN LOG START"/>
-				</log>
-				<clone id="aggregate1">
-					<target>
-                    <endpoint key="Station1EP"/>
-                </target>
-                <target>
-                    <endpoint key="Station2EP"/>
-                </target>
-                <target>
-                    <endpoint key="Station3EP"/>
-                </target>
-				</clone>
-			</inSequence>
-			<outSequence>
-				<property description="SET AGGREGATED RESPONSE" name="Aggregated_Responses" scope="default">
-					<value xmlns=""/>
-				</property>
-				<aggregate id="aggregate1">
-					<correlateOn expression="json-eval($)"/>
-					<completeCondition>
-						<messageCount max="-1" min="-1"/>
-					</completeCondition>
-					<onComplete aggregateElementType="root" enclosingElementProperty="Aggregated_Responses" expression="json-eval($.station.name)">
-						<log description="LOG AGGREGATE" level="full">
-							<property expression="$ctx:Aggregated_Responses" name="AGGREGATED STATIONS =======>"/>
-						</log>
-						<respond description="SEND OUT RESPONSE"/>
-					</onComplete>
-				</aggregate>
-			</outSequence>
+		<inSequence>
+			<log description="LOG START" level="custom">
+				<property name="LOG MESSAGE" value="STATION MAIN LOG START"/>
+			</log>
+			<clone id="aggregate1">
+				<target>
+				<endpoint key="Station1EP"/>
+			</target>
+			<target>
+				<endpoint key="Station2EP"/>
+			</target>
+			<target>
+				<endpoint key="Station3EP"/>
+			</target>
+			</clone>
+		</inSequence>
+		<outSequence>
+			<property description="SET AGGREGATED RESPONSE" name="Aggregated_Responses" scope="default">
+				<value xmlns=""/>
+			</property>
+			<aggregate id="aggregate1">
+				<correlateOn expression="json-eval($)"/>
+				<completeCondition>
+					<messageCount max="-1" min="-1"/>
+				</completeCondition>
+				<onComplete aggregateElementType="root" enclosingElementProperty="Aggregated_Responses" expression="json-eval($.station.name)">
+					<log description="LOG AGGREGATE" level="full">
+						<property expression="$ctx:Aggregated_Responses" name="AGGREGATED STATIONS =======>"/>
+					</log>
+					<respond description="SEND OUT RESPONSE"/>
+				</onComplete>
+			</aggregate>
+		</outSequence>
 		```
 	4. Export Project Artifacts and Run
 
 	5. Before, we were using CURL to trigger the API. We can use the embedded http client of WSO2 to do the same thing by going to "HTTP Client" tab in next to "Console" tab. If it doesn't show up, go to Window menu > Show View > Other and search for "HTTP Client"
 
-		* On the GET box, type: `http://localhost:8290/station` and click on green play button
+		* On the GET box, type: `http://localhost:8290/station` and click on green &#9658; button
 	
 	```log
 		[2022-04-11 01:10:14,224]  INFO {LogMediator} - {api:Station2API} LOG MESSAGE = STATION 2 LOG START
@@ -1602,7 +1602,83 @@ This is error handling in WSO2 that typically happens at the endpoint that resul
 			+ Property Name: `HTTP_SC`
 			+ Value: `404`
 		
-		* Add respond mediator to send the message to the client
+		* Add respond mediator to send the message back to the client
+	
+	8. Create another sequence called `customErrorHandlerSeq`. The send message needs to be invoked to send error messages. By default, it doesn't send error message
+		* Add `logErrorHandlerSeq` from defined sequences
+		* Add fault mediator called `CUSTOM FAULT MESSAGE`
+			+ SOAP version: `soap11`
+			+ SOAP11: `Server`
+			+ Actor: `WSO2`
+			+ Detail > value: `Wrong Gender. Try with Female!!!`
+			+ Reason > value: `Wrong Gender`
+		* Add log mediator
+			```xml
+			<log description="LOG FAULT" level="custom">
+				<property expression="$body" name="LOG FAULT MESSAGE"/>
+			</log>
+			```
+		* Add Payload Factory mediator called `SET ERROR PAYLOAD`
+			```xml
+			<payloadFactory description="SET ERROR PAYLOAD" media-type="json">
+				<format>{
+					"stacktrace":$1
+				}</format>
+				<args>
+					<arg evaluator="xml" expression="$body"/>
+				</args>
+			</payloadFactory>
+			```
+		* Add Respond mediator called `SEND OUT ERROR MESSAGE`
+	
+	9. Go back to the GenderAPI.xml, in the *API Resource*, change the Fault Sequence Type to `Named Reference` and enter `faultSeq` in the Fault Sequence Name.
+
+	10. Go back to `processingMaleSeq.xml`, click on the sequence box to access its property. On Error: `customErrorHandlerSeq`
+
+	11. Export Project Artifacts and Run
+
+	12. Using the WSO2 Integration Studio's HTTP Client:
+		* GET Method: `http://localhost:8290/gender`
+			* Headers: `GenderId=Female` then click on green &#9658; button 
+			```log
+			[2022-05-10 00:49:33,835]  INFO {LogMediator} - {api:GenderAPI} GENDER IS =====> = Female
+			[2022-05-10 00:49:33,836]  INFO {LogMediator} - {api:GenderAPI} 
+			[2022-05-10 00:49:33,847]  INFO {LogMediator} - {api:GenderAPI} text = An unexpected error occured, message = Couldn't find the endpoint with the key : unexistentFemaleEP, code = 305100, detail = Couldn't find the endpoint with the key : unexistentFemaleEP, exception = Couldn't find the endpoint with the key : unexistentFemaleEP
+			```
+			* HTTP Response:404
+			```json
+				{
+					"error":{
+							"message":Couldn't find the endpoint with the key : unexistentFemaleEP,
+							"detail": Couldn't find the endpoint with the key : unexistentFemaleEP,
+							"exception" :Couldn't find the endpoint with the key : unexistentFemaleEP
+					}
+				}
+
+
+
+		* GET Method: `http://localhost:8290/gender`
+			* Headers: `GenderId=Male` then click on green &#9658; button 
+			```log
+			[2022-05-10 00:59:45,080]  INFO {LogMediator} - {api:GenderAPI} GENDER IS =====> = null
+			[2022-05-10 00:59:45,080]  INFO {LogMediator} - {api:GenderAPI} 
+			[2022-05-10 00:59:45,082]  INFO {LogMediator} - {api:GenderAPI} text = An unexpected error occured, message = Couldn't find the endpoint with the key : unexistentFemaleEP, code = 305100, detail = Couldn't find the endpoint with the key : unexistentFemaleEP, exception = Couldn't find the endpoint with the key : unexistentFemaleEP
+
+
+			```
+			* HTTP Response:404
+			```json
+				{
+					"error":{
+							"message":Couldn't find the endpoint with the key : unexistentFemaleEP,
+							"detail": Couldn't find the endpoint with the key : unexistentFemaleEP,
+							"exception" :Couldn't find the endpoint with the key : unexistentFemaleEP
+					}
+				}
+
+			```
+
+
 
 
 
