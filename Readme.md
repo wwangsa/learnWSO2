@@ -1552,7 +1552,8 @@ Combining messages as a whole that are saved into state filter using Aggregate M
 
 30. Fault Mediator (Project folder: ErrorHandling)
 This is error handling in WSO2 that typically happens at the endpoint that resulted in timeout.
-	
+![Big Picture for Ch 30](Resources/screenshots/ch30.png)
+
 	1. Create new integration project called `ErrorHandling`
 	2. Create new REST API Project called `GenderAPI` with context `/gender` and add 2 logs on the `Then` and `Else` sections
 		
@@ -1637,7 +1638,7 @@ This is error handling in WSO2 that typically happens at the endpoint that resul
 
 	11. Export Project Artifacts and Run
 
-	12. Using the WSO2 Integration Studio's HTTP Client:
+	12. Using the WSO2 Integration Studio's HTTP Client (Note: WSO2 failed to detect gender id when using curl command):
 		* GET Method: `http://localhost:8290/gender`
 			* Headers: `GenderId=Female` then click on green &#9658; button 
 			```log
@@ -1647,34 +1648,42 @@ This is error handling in WSO2 that typically happens at the endpoint that resul
 			```
 			* HTTP Response:404
 			```json
-				{
-					"error":{
-							"message":Couldn't find the endpoint with the key : unexistentFemaleEP,
-							"detail": Couldn't find the endpoint with the key : unexistentFemaleEP,
-							"exception" :Couldn't find the endpoint with the key : unexistentFemaleEP
-					}
+			{
+				"error":{
+						"message":Couldn't find the endpoint with the key : unexistentFemaleEP,
+						"detail": Couldn't find the endpoint with the key : unexistentFemaleEP,
+						"exception" :Couldn't find the endpoint with the key : unexistentFemaleEP
 				}
-
+			}
+			```
 
 
 		* GET Method: `http://localhost:8290/gender`
 			* Headers: `GenderId=Male` then click on green &#9658; button 
 			```log
-			[2022-05-10 00:59:45,080]  INFO {LogMediator} - {api:GenderAPI} GENDER IS =====> = null
-			[2022-05-10 00:59:45,080]  INFO {LogMediator} - {api:GenderAPI} 
-			[2022-05-10 00:59:45,082]  INFO {LogMediator} - {api:GenderAPI} text = An unexpected error occured, message = Couldn't find the endpoint with the key : unexistentFemaleEP, code = 305100, detail = Couldn't find the endpoint with the key : unexistentFemaleEP, exception = Couldn't find the endpoint with the key : unexistentFemaleEP
+			[2022-05-16 00:53:08,482]  INFO {LogMediator} - {api:GenderAPI} GENDER IS =====> = Male
+			[2022-05-16 00:53:08,484]  INFO {LogMediator} - {api:GenderAPI} LOG MALE = MALE
+			[2022-05-16 00:53:08,500]  INFO {LogMediator} - {api:GenderAPI} LOG MESSAGE = PROCESSING MALE SEQ START
+			[2022-05-16 00:53:08,509]  INFO {LogMediator} - {api:GenderAPI} text = An unexpected error occured, message = Couldn't find the endpoint with the key : unexistentMaleEP, code = 305100, detail = Couldn't find the endpoint with the key : unexistentMaleEP, exception = Couldn't find the endpoint with the key : unexistentMaleEP
+			[2022-05-16 00:53:08,517]  INFO {LogMediator} - {api:GenderAPI} LOG FAULT MESSAGE = <soapenv:Body xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Fault><faultcode xmlns:soap11Env="http://schemas.xmlsoap.org/soap/envelope/">soap11Env:Server</faultcode><faultstring>Wrong Gender</faultstring><faultactor>WSO2</faultactor><detail>Wrong Gender. Try with Female!!!</detail></soapenv:Fault></soapenv:Body>
+
 
 
 			```
-			* HTTP Response:404
+			* HTTP Response:500 Internal server error
 			```json
-				{
-					"error":{
-							"message":Couldn't find the endpoint with the key : unexistentFemaleEP,
-							"detail": Couldn't find the endpoint with the key : unexistentFemaleEP,
-							"exception" :Couldn't find the endpoint with the key : unexistentFemaleEP
+			{
+				"stacktrace": {
+					"Body": {
+						"Fault": {
+							"faultcode": "soap11Env:Server",
+							"faultstring": "Wrong Gender",
+							"faultactor": "WSO2",
+							"detail": "Wrong Gender. Try with Female!!!"
+						}
 					}
 				}
+			}
 
 			```
 
