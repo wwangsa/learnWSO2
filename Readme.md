@@ -1638,9 +1638,10 @@ This is error handling in WSO2 that typically happens at the endpoint that resul
 
 	11. Export Project Artifacts and Run
 
-	12. Using the WSO2 Integration Studio's HTTP Client (Note: WSO2 failed to detect gender id when using curl command):
+	12. Get data:
 		* GET Method: `http://localhost:8290/gender`
-			* Headers: `GenderId=Female` then click on green &#9658; button 
+			* Using curl: `curl --location --request GET 'http://localhost:8290/gender' --header 'GenderId: Female'`
+			* Using WSO2 HTTP Client Headers: `GenderId=Female` then click on green &#9658; button 
 			```log
 			[2022-05-10 00:49:33,835]  INFO {LogMediator} - {api:GenderAPI} GENDER IS =====> = Female
 			[2022-05-10 00:49:33,836]  INFO {LogMediator} - {api:GenderAPI} 
@@ -1659,7 +1660,8 @@ This is error handling in WSO2 that typically happens at the endpoint that resul
 
 
 		* GET Method: `http://localhost:8290/gender`
-			* Headers: `GenderId=Male` then click on green &#9658; button 
+			* Using curl: `curl --location --request GET 'http://localhost:8290/gender' --header 'GenderId: Male'`
+			* Using WSO2 HTTP Client Headers: `GenderId=Male` then click on green &#9658; button 
 			```log
 			[2022-05-16 00:53:08,482]  INFO {LogMediator} - {api:GenderAPI} GENDER IS =====> = Male
 			[2022-05-16 00:53:08,484]  INFO {LogMediator} - {api:GenderAPI} LOG MALE = MALE
