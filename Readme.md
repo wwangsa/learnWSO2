@@ -9,11 +9,18 @@ Github: https://github.com/nelsonandredias/wso2_course
 
 ## Deploying code
 
-To pull this code and save it in default workspace (using WSO2 IS v8.0.0)
+1. Pull the code and save it to WSO2 workspace (using WSO2 IS v8.0.0)
 ```bash
-	cd ~/IntegrationStudio/8.0.0/workspace
+	mkdir ~/WSO2
+	cd ~/WSO2
 	git clone https://github.com/wwangsa/learnWSO2.git
 ```
+2. Open Integration Studio
+	* Choose WSO2 workspace above
+	* Once Integration Studio is opened, go to File > "Open Projects from File System"
+		* Select the import source directory to the ~/WSO2
+		* Select All Folder, click on "Close newly imported projects upon completion" then click finish. 
+
 
 ## Tips
 * When doing google search, use the following keywords. Most of the time, google search will point to old article so specifying version would help narrow down the latest result. WSO2 Enterprise Integrator (EI) was introduced on v6.
